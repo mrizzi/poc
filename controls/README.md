@@ -93,7 +93,8 @@ For creating the `Foo` resource, follow these steps:
 
     import org.hibernate.annotations.SQLDelete;
     import org.hibernate.annotations.Where;
-    import io.tackle.controls.entities.AbstractEntity;import javax.persistence.Entity;
+    import io.tackle.controls.entities.AbstractEntity;
+    import javax.persistence.Entity;
     
     @Entity
     @SQLDelete(sql = "UPDATE foo SET deleted = true WHERE id = ?", check = ResultCheckStyle.COUNT)
@@ -115,7 +116,7 @@ For creating the `Foo` resource, follow these steps:
     public interface FooResource extends PanacheEntityResource<Foo, Long> {}
    ```
 1. start the application in dev mode following [Running the application in dev mode](#running-the-application-in-dev-mode)
-1. open a browser to http://localhost:8080/controls/swagger-ui/, this will trigger code reload
+1. open a browser to http://localhost:8080/controls/q/swagger-ui/, this will trigger code reload
 1. check the application's log in terminal to retrieve the Hibernate output about table creation, something like:
    ```sql
    Hibernate: 
