@@ -40,6 +40,8 @@ public interface ListFilteredResource<Entity extends PanacheEntity> extends Type
      * <p>
      * This must be improved, refactored and even rewritten if needed but it's meant to work within
      * the Controls application proof of concept.
+     *
+     * First version was in https://github.com/mrizzi/poc/blob/63c988eb5f2a2b7aee8c9ee733753452a4697984/controls/src/main/java/io/tackle/controls/toberemoved/ListFilteredResource.java
      */
 
     String QUERY_PARAM_SIZE = "size";
@@ -228,7 +230,6 @@ public interface ListFilteredResource<Entity extends PanacheEntity> extends Type
      */
     default int $$_page_count_list(Page var1, String query, Map<String, Object> queryParams) throws Exception {
         // Change to manage filtering
-//        PanacheQuery var2 = (PanacheQuery) getPanacheEntityType().getMethod("findAll").invoke(null);
         PanacheQuery var2 = (PanacheQuery) getPanacheEntityType().getMethod("find", String.class, Map.class).invoke(null, query, queryParams);
         var2.page(var1);
         return var2.pageCount();
