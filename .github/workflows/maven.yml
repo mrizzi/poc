@@ -1,13 +1,6 @@
 name: POC Controls CI
 
-on:
-  push:
-    branches: [ main ]
-    paths: controls/*
-  pull_request:
-    branches: [ main ]
-    paths: controls/*
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   unit-test:
