@@ -3,8 +3,10 @@ name: POC Controls CI
 on:
   push:
     branches: [ main ]
+    paths: controls/*
   pull_request:
     branches: [ main ]
+    paths: controls/*
 
 jobs:
   unit-test:
@@ -24,7 +26,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2  
     - name: Build with Maven
-      run: mvn -B test --file pom.xml
+      run: mvn -B test --file controls/pom.xml
 
   integration-native-test:
 
@@ -43,4 +45,4 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2  
     - name: Build with Maven
-      run: mvn -B verify -Pnative -Dquarkus-profile=test --file pom.xml
+      run: mvn -B verify -Pnative -Dquarkus-profile=test --file controls/pom.xml
