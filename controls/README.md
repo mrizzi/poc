@@ -86,14 +86,13 @@ $ ./src/main/resources/import-curl.sh localhost:8080
 
 For creating the `Foo` resource, follow these steps:
 
-1. add `Foo.java` bean class in [`src/main/java/org/jboss/tackle/controls/entities/`](src/main/java/io/tackle/controls/entities/)
+1. add `Foo.java` bean class in [`src/main/java/io/tackle/controls/entities/`](src/main/java/io/tackle/controls/entities/)
    adapting this template class:
    ```java
     package io.tackle.controls.entities;
 
     import org.hibernate.annotations.SQLDelete;
     import org.hibernate.annotations.Where;
-    import io.tackle.controls.entities.AbstractEntity;
     import javax.persistence.Entity;
     
     @Entity
@@ -103,21 +102,94 @@ For creating the `Foo` resource, follow these steps:
         <<add fields>>
     }
    ```
-1. add `FooResource.java` resource class in [`src/main/java/org/jboss/tackle/controls/resources/`](src/main/java/io/tackle/controls/resources/)
+   when adding fields to the entity, remember to add the `@Filterable` annotation (from `io.tackle.controls.annotations` package) to the fields accepted as entity filters in REST endpoint.  
+   For example, if there's an entity's field named `description` that has to be a valid field to filter the entity it belongs to, add the annotation in this way:
+   ```java
+   @Filterable
+   public String description;
+   ```
+   In case the field represents a relational association entity, then add the field `filterName` to the `@Filterable` annotation in order to specify, with dot notation, the related entity field the filter will be applied to.  
+   For example, the [`BusinessService`](src/main/java/io/tackle/controls/entities/BusinessService.java) entity has an association with `Stakeholder` entity through the `owner` field.  
+   Since it has been decided the `Stakeholder`'s field to filter by is the `displayName`, the `owner` field has been annotated in this way:
+   ```java
+   @Filterable(filterName = "owner.displayName")
+   public Stakeholder owner;
+   ```
+   so that a REST request to filter Business Service entities can use the `owner.displayName` as query parameter.
+1. add `FooResource.java` resource class in [`src/main/java/io/tackle/controls/resources/`](src/main/java/io/tackle/controls/resources/)
    adapting this template class:
    ```java
     package io.tackle.controls.resources;
     
     import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
+    import io.quarkus.panache.common.Page;
+    import io.quarkus.panache.common.Sort;
+    import io.quarkus.rest.data.panache.MethodProperties;
     import io.quarkus.rest.data.panache.ResourceProperties;
     import io.tackle.controls.entities.Foo;
     
     @ResourceProperties(hal = true)
-    public interface FooResource extends PanacheEntityResource<Foo, Long> {}
+    public interface FooResource extends PanacheEntityResource<Foo, Long> {
+       @MethodProperties(exposed = false)
+       List<BusinessService> list(Page page, Sort sort);
+    }
+   ```
+   in this way the REST Data Panache extension will be used for providing all endpoints but the "list" one because we need filtering for lists which is not provided (yet?) from that Quarkus extension.
+1. to add the "list" endpoints (both plain JSON and HAL), add `FooListFilteredResource.java` class in [`src/main/java/io/tackle/controls/resources/`](src/main/java/io/tackle/controls/resources/) adapting this template class:
+   ```java
+   package io.tackle.controls.resources;
+   
+   import io.tackle.controls.entities.Foo;
+   import org.jboss.resteasy.links.LinkResource;
+   
+   import javax.ws.rs.DefaultValue;
+   import javax.ws.rs.GET;
+   import javax.ws.rs.Path;
+   import javax.ws.rs.Produces;
+   import javax.ws.rs.QueryParam;
+   import javax.ws.rs.core.Context;
+   import javax.ws.rs.core.Response;
+   import javax.ws.rs.core.UriInfo;
+   import java.util.List;
+   
+   @Path("foo")
+   public class FooListFilteredResource implements ListFilteredResource<Foo> {
+   
+       @Override
+       public Class<Foo> getPanacheEntityType() {
+           return Foo.class;
+       }
+   
+       @GET
+       @Path("")
+       @Produces({"application/json"})
+       @LinkResource(
+               entityClassName = "io.tackle.controls.entities.Foo",
+               rel = "list"
+       )
+       public Response list(@QueryParam("sort") List var1,
+                            @QueryParam("page") @DefaultValue("0") int var2,
+                            @QueryParam("size") @DefaultValue("20") int var3,
+                            @QueryParam("filter") @DefaultValue("") String filter,
+                            @Context UriInfo var4) throws Exception {
+           return ListFilteredResource.super.list(var1, var2, var3, filter, var4, false);
+       }
+   
+       @Path("")
+       @GET
+       @Produces({"application/hal+json"})
+       public Response listHal(@QueryParam("sort") List var1,
+                               @QueryParam("page") @DefaultValue("0") int var2,
+                               @QueryParam("size") @DefaultValue("20") int var3,
+                               @QueryParam("filter") @DefaultValue("") String filter,
+                               @Context UriInfo var4) throws Exception {
+           return ListFilteredResource.super.list(var1, var2, var3, filter, var4, true);
+       }
+   }
    ```
 1. start the application in dev mode following [Running the application in dev mode](#running-the-application-in-dev-mode)
 1. open a browser to http://localhost:8080/controls/q/swagger-ui/, this will trigger code reload
-1. check the application's log in terminal to retrieve the Hibernate output about table creation, something like:
+1. check the application's log in terminal to retrieve Hibernate output about table creation, something like:
    ```sql
    Hibernate: 
     
@@ -151,6 +223,8 @@ For creating the `Foo` resource, follow these steps:
     alter table if exists foo 
        add column updateUser varchar(255)
    ```
+   
+An example of how to rename/remove/add columns copying data from existing into new columns is provided in [`V20210128__alter_stakeholder.sql`](src/main/resources/db/migration/V20210128__alter_stakeholder.sql) file.
 
 ### Check generated code
 
