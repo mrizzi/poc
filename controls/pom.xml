@@ -25,6 +25,7 @@
     <testcontainers.version>1.15.0</testcontainers.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
     <jacoco.version>0.8.6</jacoco.version>
+    <quarkus.package.type>jar</quarkus.package.type>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -289,6 +290,22 @@
                     <argument>0</argument>
                   </arguments>
                   <async>true</async>
+                </configuration>
+              </execution>
+              <execution>
+                <id>push-image-to-minikube</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>${project.build.resources[0].directory}/scripts/push-image-to-minikube.sh</executable>
+                  <arguments>
+                    <argument>${project.artifactId}</argument>
+                    <argument>${project.version}</argument>
+                    <argument>${quarkus.package.type}</argument>
+                  </arguments>
+                  <async>false</async>
                 </configuration>
               </execution>
             </executions>
