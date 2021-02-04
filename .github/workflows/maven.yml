@@ -63,9 +63,11 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Build with Maven
-      id: build-image
-      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.additional-tags=${{ github.sha }} -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
-
-    - name: Use the image
-      run: echo "New JVM image has been pushed to ${{ steps.push-to-quay.outputs.registry-path }}"
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v3.x
+    - name: Build Image for PR with Maven
+      if: ${{ github.event_name == 'pull_request' }}
+      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.tag=${{ env.GITHUB_SHA_SHORT }} -Dquarkus.container-image.additional-tags=${{ env.GITHUB_REF_SLUG }}-Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
+    - name: Build Image for main branch with Maven
+      if: ${{ github.event_name == 'push' }}
+      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.additional-tags=${{ env.GITHUB_SHA_SHORT }} -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
