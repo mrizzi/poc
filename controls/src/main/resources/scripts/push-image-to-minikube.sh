@@ -4,7 +4,7 @@ TAR_PATH=/tmp/$TAR_NAME
 
 if command -v minikube &> /dev/null
 then
-  if minikube status &> /dev/null
+  if minikube status # &> /dev/null
   then
     eval $(minikube -p minikube podman-env)
     echo 'Evaluated minikube environment variables'
