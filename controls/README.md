@@ -304,18 +304,37 @@ Once started you can open its dashboard executing
 $ minikube dashboard
 ```
 
-### Deploy the application
+#### Deploy the application
 
+First build the container image for the application executing:
 ```Shell
 $ ./mvnw package -Pcontainer-image # eventually with -Pnative to deploy the native application
-$ podman images --filter=reference='localhost*controls:'$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) # retrieve the IMAGE ID of the container just created
-$ podman save -o /tmp/controls.tar <IMAGE ID>
-$ eval $(minikube -p minikube podman-env)
-$ podman-remote load -i /tmp/controls.tar mrizzi/controls:0.0.1-SNAPSHOT-jar # using the image name and tag referenced in the Deployment
-$ podman-remote images # check the above image has been successfully uploaded
-$ kubectl rollout restart deployment controls
-$ minikube service list
- ```
+```
+If it's the first deployment then create (just once) a dedicated namespace with
+```shell
+$ kubectl create namespace tackle
+```
+then you can deploy applying the files generated during the build running the command:
+```Shell
+$ kubectl apply -f target/kubernetes/minikube.yml -n tackle
+```
+If there are no changes to the resources in Kubernetes and you just need to have the latest image deployed, you can execute
+```Shell
+$ kubectl rollout restart deployment controls -n tackle
+```
+
+#### Call endpoints
+
+```shell
+$ export access_token=$(\
+    curl -X POST $(minikube service --url=true keycloak)/auth/realms/quarkus/protocol/openid-connect/token \
+    --user backend-service:secret \
+    -H 'content-type: application/x-www-form-urlencoded' \
+    -d 'username=alice&password=alice&grant_type=password' | jq --raw-output '.access_token' \
+ )
+$ curl -X GET "$(minikube service --url=true controls)/controls/business-service?description=ser&sort=name" \
+  -H 'Accept: application/json' -H "Authorization: Bearer "$access_token |jq .
+```
 
 ### Kubernetes
 
