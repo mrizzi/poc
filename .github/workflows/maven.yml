@@ -65,20 +65,6 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v3.x
-    - name: Print slug/short variables
-      run: |
-        echo "Slug variables"
-        echo " - ${{ env.GITHUB_REF_SLUG }}"
-        echo " - ${{ env.GITHUB_HEAD_REF_SLUG }}"
-        echo " - ${{ env.GITHUB_BASE_REF_SLUG }}"
-        echo " - ${{ env.GITHUB_REPOSITORY_SLUG }}"
-        echo "Slug URL variables"
-        echo " - ${{ env.GITHUB_REF_SLUG_URL }}"
-        echo " - ${{ env.GITHUB_HEAD_REF_SLUG_URL }}"
-        echo " - ${{ env.GITHUB_BASE_REF_SLUG_URL }}"
-        echo " - ${{ env.GITHUB_REPOSITORY_SLUG_URL }}"
-        echo "Short SHA variables"
-        echo " - ${{ env.GITHUB_SHA_SHORT }}"
     - name: Build Image for PR with Maven
       if: ${{ github.event_name == 'pull_request' }}
       run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.tag=${{ env.GITHUB_SHA_SHORT }} -Dquarkus.container-image.additional-tags=${{ env.GITHUB_HEAD_REF_SLUG }} -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
