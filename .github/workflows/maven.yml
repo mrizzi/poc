@@ -65,12 +65,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
       id: build-image
-      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests \
-        -Dquarkus.container-image.push=true \
-        -Dquarkus.container-image.additional-tags=${{ github.sha }} \
-        -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} \
-        -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }}
-        -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
+      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.additional-tags=${{ github.sha }} -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
 
     - name: Use the image
       run: echo "New JVM image has been pushed to ${{ steps.push-to-quay.outputs.registry-path }}"
