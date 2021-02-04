@@ -67,10 +67,10 @@ jobs:
       uses: rlespinasse/github-slug-action@v3.x
     - name: Build Image for PR with Maven
       if: ${{ github.event_name == 'pull_request' }}
-      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.tag=${{ env.GITHUB_SHA_SHORT }}-jvm -Dquarkus.container-image.additional-tags=${{ env.GITHUB_HEAD_REF_SLUG }}-jvm -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
+      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.tag=${{ env.GITHUB_SHA_SHORT }}-jar -Dquarkus.container-image.additional-tags=${{ env.GITHUB_HEAD_REF_SLUG }}-jar -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
     - name: Build Image for main branch with Maven
       if: ${{ github.event_name == 'push' }}
-      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.additional-tags=${{ env.GITHUB_SHA_SHORT }}-jvm latest-jvm -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
+      run: mvn -B package --file controls/pom.xml -Pcontainer-image -DskipTests -Dquarkus.container-image.push=true -Dquarkus.container-image.group=${{ github.repository_owner }} -Dquarkus.container-image.additional-tags=${{ env.GITHUB_SHA_SHORT }}-jar latest-jar -Dquarkus.container-image.registry=${{ secrets.QUAY_REPO }} -Dquarkus.container-image.username=${{ secrets.QUAY_ROBOT_USERNAME }} -Dquarkus.container-image.password=${{ secrets.QUAY_ROBOT_TOKEN }}
 
   build-native-container:
     name: Build and push native image
