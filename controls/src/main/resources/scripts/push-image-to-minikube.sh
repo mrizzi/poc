@@ -4,9 +4,8 @@ TAR_PATH=/tmp/$TAR_NAME
 
 if command -v minikube &> /dev/null
 then
-  if minikube status # &> /dev/null
+  if minikube status && eval $(minikube -p minikube podman-env)
   then
-    eval $(minikube -p minikube podman-env)
     echo 'Evaluated minikube environment variables'
     podman save -o $TAR_PATH $IMAGE_ID
     echo 'Saved temporary image '$IMAGE_ID' to file '$TAR_PATH
