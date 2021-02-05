@@ -1,4 +1,4 @@
-name: POC Controls CI
+name: PR POC Controls CI
 
 on:
   pull_request:
