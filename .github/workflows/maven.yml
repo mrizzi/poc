@@ -3,10 +3,10 @@ name: POC Controls CI
 on:
   push:
     branches: [ main ]
-    paths: controls/*
+    paths: controls/**
   pull_request:
     branches: [ main ]
-    paths: controls/*
+    paths: controls/**
 
 jobs:
   unit-test:
