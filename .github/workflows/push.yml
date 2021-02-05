@@ -4,9 +4,6 @@ on:
   push:
     branches: [ main ]
     paths: controls/**
-  pull_request:
-    branches: [ main ]
-    paths: controls/**
 
 jobs:
   unit-test:
@@ -50,6 +47,7 @@ jobs:
   build-jvm-container:
     name: Build and push JVM image
     runs-on: ubuntu-latest
+    needs: [unit-test]
 
     steps:
     - uses: actions/checkout@v2
@@ -75,6 +73,7 @@ jobs:
   build-native-container:
     name: Build and push native image
     runs-on: ubuntu-latest
+    needs: [integration-native-test]
 
     steps:
     - uses: actions/checkout@v2

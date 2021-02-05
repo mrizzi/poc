@@ -353,7 +353,7 @@ where
 
 ### Openshift
 
-*TBD* 
+*TBD*
 
 ## Performance testing
 
