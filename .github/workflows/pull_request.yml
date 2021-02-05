@@ -1,9 +1,6 @@
-name: POC Controls CI
+name: PR POC Controls CI
 
 on:
-  push:
-    branches: [ main ]
-    paths: controls/**
   pull_request:
     branches: [ main ]
     paths: controls/**
