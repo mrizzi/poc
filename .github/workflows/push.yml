@@ -47,7 +47,7 @@ jobs:
   build-jvm-container:
     name: Build and push JVM image
     runs-on: ubuntu-latest
-    needs: [unit-test]
+    needs: [unit-test, integration-native-test]
 
     steps:
     - uses: actions/checkout@v2
@@ -73,7 +73,7 @@ jobs:
   build-native-container:
     name: Build and push native image
     runs-on: ubuntu-latest
-    needs: [integration-native-test]
+    needs: [unit-test, integration-native-test]
 
     steps:
     - uses: actions/checkout@v2
