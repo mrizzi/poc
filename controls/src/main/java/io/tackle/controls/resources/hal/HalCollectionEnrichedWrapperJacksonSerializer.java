@@ -46,6 +46,8 @@ public class HalCollectionEnrichedWrapperJacksonSerializer extends JsonSerialize
             entitySerializer.serialize(new HalEntityWrapper(entity), generator, serializers);
         }
         generator.writeEndArray();
+        generator.writeFieldName("_metadata");
+        generator.writeObject(wrapper.getMetadata());
         generator.writeEndObject();
     }
 
