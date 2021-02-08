@@ -27,10 +27,12 @@ public class ServicesParameterizedTest extends SecuredResourceTest {
     @DisplayName("testListHalEndpoint")
     @ParameterizedTest(name = "{index} ==> Resource ''{0}'' tested is {1}")
     @CsvSource({
-            "stakeholder,      2, 4::5   , displayName, Jessica Fletcher::Emmett Brown                              , 5",
-            "business-service, 3, 1::2::3, name       , Home Banking BU::Online Investments service::Credit Cards BS, 2"
+            "stakeholder,      2, 4::5   , displayName, Jessica Fletcher::Emmett Brown                              , 5, 2",
+            "business-service, 3, 1::2::3, name       , Home Banking BU::Online Investments service::Credit Cards BS, 2, 3"
     })
-    public void testListHalEndpoint(String resource, int size, @ConvertWith(CSVtoArray.class) Integer[] ids, String anotherFieldName, @ConvertWith(CSVtoArray.class) String[] anotherFieldValues, int selfId) {
+    public void testListHalEndpoint(String resource, int size, @ConvertWith(CSVtoArray.class) Integer[] ids,
+                                    String anotherFieldName, @ConvertWith(CSVtoArray.class) String[] anotherFieldValues,
+                                    int selfId, int totalCount) {
         given()
                 .accept("application/hal+json")
                 .queryParam("sort", "id")
@@ -42,6 +44,7 @@ public class ServicesParameterizedTest extends SecuredResourceTest {
                         String.format("_embedded.%s.%s", resource, anotherFieldName), containsInRelativeOrder(anotherFieldValues),
                         String.format("_embedded.%s[1]._links.size()", resource), is(5),
                         String.format("_embedded.%s[1]._links.self.href", resource), is(String.format("http://localhost:8081/controls/%s/%d", resource, selfId)),
+                        String.format("_embedded._metadata.totalCount", resource), is(totalCount),
                         "_links.size()", is(4));
     }
 

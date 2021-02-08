@@ -4,13 +4,13 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
 public class Metadata {
-    public long count;
+    public long totalCount;
 
     private Metadata() {}
 
-    public static Metadata withCount(long count) {
+    public static Metadata withTotalCount(long totalCount) {
         Metadata metadata = new Metadata();
-        metadata.count = count;
+        metadata.totalCount = totalCount;
         return metadata;
     }
 }
