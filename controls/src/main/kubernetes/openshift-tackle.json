@@ -4,7 +4,8 @@
   "metadata": {
     "annotations": {
       "description": "Tackle template",
-      "openshift.io/display-name": "Migration Toolkit for Applications"
+      "openshift.io/display-name": "Tackle (Konveyor)",
+      "iconClass": "fas fa-boxes"
     },
     "name": "tackle"
   },
@@ -14,7 +15,7 @@
     "app.kubernetes.io/instance": "tackle",
     "app.kubernetes.io/part-of": "tackle"
   },
-  "message": "Tackle has been installed. The username/password for accessing the PostgreSQL database \"${DB_DATABASE}\" is ${DB_USERNAME}/${DB_PASSWORD}.",
+  "message": "Tackle has been installed. The username/password for accessing the PostgreSQL database is ${CONTROLS_DATASOURCE_USERNAME}/${CONTROLS_DATASOURCE_PASSWORD}.",
   "parameters": [
     {
       "displayName": "Controls Database Username",
