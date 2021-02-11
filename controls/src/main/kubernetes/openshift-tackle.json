@@ -50,17 +50,17 @@
       "required": true
     },
     {
-      "displayName": "Container Images Registry User ID",
-      "description": "The value of the user name for the images repository to be used",
-      "name": "CONTAINER_IMAGES_USER",
-      "value": "mrizzi",
+      "displayName": "Controls REST container images",
+      "description": "The value of the Controls REST container image to be used",
+      "name": "CONTROLS_REST_CONTAINER_IMAGE",
+      "value": "quay.io/mrizzi/poc-controls:0.0.1-SNAPSHOT-native",
       "required": true
     },
     {
-      "displayName": "Container Registry Images Tag",
-      "description": "The value of the tag for the images from Quay to be used",
-      "name": "CONTAINER_IMAGES_TAG",
-      "value": "latest-native",
+      "displayName": "Controls REST container images",
+      "description": "The value of the Controls REST container image to be used",
+      "name": "CONTROLS_UI_CONTAINER_IMAGE",
+      "value": "quay.io/carlosthe19916/controls-ui:master",
       "required": true
     }
   ],
@@ -685,7 +685,7 @@
             "containers": [
               {
                 "name": "controls-ui",
-                "image": "quay.io/mrizzi/poc-controls-ui:0.0.1-SNAPSHOT",
+                "image": "${CONTROLS_UI_CONTAINER_IMAGE}",
                 "ports": [
                   {
                     "containerPort": 8080,
@@ -790,10 +790,6 @@
       "metadata" : {
         "annotations" : {
           "prometheus.io/scheme" : "http",
-          "app.openshift.io/vcs-url" : "https://github.com/mrizzi/poc.git",
-          "app.quarkus.io/commit-id" : "02a38ddc1102f912d56657eb590911aa9a10b25c",
-          "app.quarkus.io/vcs-url" : "https://github.com/mrizzi/poc.git",
-          "app.quarkus.io/build-timestamp" : "2021-02-10 - 10:53:41 +0000",
           "prometheus.io/scrape" : "true",
           "prometheus.io/path" : "/q/metrics",
           "prometheus.io/port" : "8080"
@@ -889,7 +885,7 @@
                   }
                 }
               } ],
-              "image" : "quay.io/mrizzi/poc-controls:0.0.1-SNAPSHOT-native",
+              "image" : "${CONTROLS_REST_CONTAINER_IMAGE}",
               "imagePullPolicy" : "Always",
               "livenessProbe" : {
                 "failureThreshold" : 3,

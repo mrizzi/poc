@@ -2176,7 +2176,7 @@ spec:
     spec:
       containers:
         - name: controls-ui
-          image: 'quay.io/mrizzi/poc-controls-ui:0.0.1-SNAPSHOT'
+          image: quay.io/carlosthe19916/controls-ui:master
           ports:
             - containerPort: 8080
               protocol: TCP
