@@ -15,6 +15,23 @@ spec:
       storage: 1Gi
   volumeMode: Filesystem
 ---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: keycloak-postgresql
+  labels:
+    app.kubernetes.io/name: keycloak-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: keycloak-postgresql
+    app.kubernetes.io/part-of: tackle
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+---
 kind: Secret
 apiVersion: v1
 metadata:
@@ -28,6 +45,21 @@ data:
   database-name: Y29udHJvbHNfZGI=
   database-password: Y29udHJvbHM=
   database-user: Y29udHJvbHM=
+type: Opaque
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: keycloak-postgresql
+  labels:
+    app.kubernetes.io/name: keycloak-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: keycloak-postgresql
+    app.kubernetes.io/part-of: tackle
+data:
+  database-name: a2V5Y2xvYWs=
+  database-password: a2V5Y2xvYWs=
+  database-user: a2V5Y2xvYWs=
 type: Opaque
 ---
 apiVersion: v1
@@ -47,6 +79,120 @@ spec:
   selector:
     app.kubernetes.io/name: keycloak
 # ???  type: LoadBalancer
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: keycloak-postgresql
+  labels:
+    app.kubernetes.io/name: keycloak-postgres
+    app.kubernetes.io/version: '10.6'
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: keycloak-postgres
+    app.kubernetes.io/part-of: tackle
+spec:
+  ports:
+    - name: tcp
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  selector:
+    app.kubernetes.io/name: keycloak-postgres
+    app.kubernetes.io/version: '10.6'
+  type: ClusterIP
+  sessionAffinity: None
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: keycloak-postgres
+  labels:
+    app.kubernetes.io/name: keycloak-postgres
+    app.kubernetes.io/version: '10.6'
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: keycloak-postgres
+    app.kubernetes.io/part-of: tackle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak-postgres
+      app.kubernetes.io/version: '10.6'
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: keycloak-postgres
+        app.kubernetes.io/version: '10.6'
+    spec:
+      volumes:
+        - name: keycloak-postgresql-data
+          persistentVolumeClaim:
+            claimName: keycloak-postgresql
+      containers:
+        - name: postgres
+          image: postgres:10.6
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-postgresql
+                  key: database-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-postgresql
+                  key: database-password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-postgresql
+                  key: database-name
+          resources: {}
+          livenessProbe:
+            exec:
+              command:
+                - "/bin/sh"
+                - "-c"
+                - 'psql -U $POSTGRES_USER -d $POSTGRES_DB -c ''SELECT 1'' '
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - "/bin/sh"
+                - "-c"
+                - 'psql -U $POSTGRES_USER -d $POSTGRES_DB -c ''SELECT 1'' '
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: "/dev/termination-log"
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: keycloak-postgresql-data
+              mountPath: "/var/lib/postgresql"
+          securityContext:
+            privileged: false
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -83,6 +229,20 @@ spec:
               value: "true"
             - name: KEYCLOAK_IMPORT
               value: /etc/config/quarkus-realm.json
+            - name: DB_VENDOR
+              value: postgres
+            - name: DB_ADDR
+              value: keycloak-postgresql
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-postgresql
+                  key: database-user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-postgresql
+                  key: database-password
           ports:
             - name: http
               containerPort: 8080
@@ -2031,6 +2191,21 @@ spec:
               value: controls-ui
             - name: SSO_SERVER_URL
               value: 'http://keycloak:8080'
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "[ -f /run/nginx.pid ] && ps -A | grep nginx"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
@@ -2073,7 +2248,7 @@ metadata:
     prometheus.io/port: "8080"
     prometheus.io/scheme: http
     prometheus.io/scrape: "true"
-    prometheus.io/path: /metrics
+    prometheus.io/path: /q/metrics
   labels:
     app.kubernetes.io/name: poc-controls
     app.kubernetes.io/part-of: tackle
@@ -2097,11 +2272,8 @@ metadata:
   annotations:
     prometheus.io/port: "8080"
     prometheus.io/scheme: http
-    app.quarkus.io/commit-id: 02a38ddc1102f912d56657eb590911aa9a10b25c
-    app.quarkus.io/vcs-url: https://github.com/mrizzi/poc.git
-    app.quarkus.io/build-timestamp: 2021-02-10 - 10:53:41 +0000
     prometheus.io/scrape: "true"
-    prometheus.io/path: /metrics
+    prometheus.io/path: /q/metrics
   labels:
     app.kubernetes.io/component: rest
     app.kubernetes.io/version: 0.0.1-SNAPSHOT-native
@@ -2120,11 +2292,8 @@ spec:
       annotations:
         prometheus.io/port: "8080"
         prometheus.io/scheme: http
-        app.quarkus.io/commit-id: 02a38ddc1102f912d56657eb590911aa9a10b25c
-        app.quarkus.io/vcs-url: https://github.com/mrizzi/poc.git
-        app.quarkus.io/build-timestamp: 2021-02-10 - 10:53:41 +0000
         prometheus.io/scrape: "true"
-        prometheus.io/path: /metrics
+        prometheus.io/path: /q/metrics
       labels:
         app.kubernetes.io/component: rest
         app.kubernetes.io/version: 0.0.1-SNAPSHOT-native
@@ -2137,6 +2306,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: QUARKUS_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: controls-postgresql
+                  key: database-user
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: controls-postgresql
+                  key: database-password
           image: quay.io/mrizzi/poc-controls:0.0.1-SNAPSHOT-native
           imagePullPolicy: Always
           livenessProbe:
