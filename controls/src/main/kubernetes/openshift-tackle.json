@@ -17,17 +17,17 @@
   "message": "Tackle has been installed. The username/password for accessing the PostgreSQL database \"${DB_DATABASE}\" is ${DB_USERNAME}/${DB_PASSWORD}.",
   "parameters": [
     {
-      "displayName": "Database Username",
-      "description": "Database user name",
-      "name": "DB_USERNAME",
+      "displayName": "Controls Database Username",
+      "description": "Controls database user name",
+      "name": "CONTROLS_DATASOURCE_USERNAME",
       "from": "user[a-zA-Z0-9]{3}",
       "generate": "expression",
       "required": true
     },
     {
-      "displayName": "Database Password",
-      "description": "Database user password",
-      "name": "DB_PASSWORD",
+      "displayName": "Controls Database Password",
+      "description": "Controls database user password",
+      "name": "CONTROLS_DATASOURCE_PASSWORD",
       "from": "[a-zA-Z0-9]{8}",
       "generate": "expression",
       "required": true
@@ -84,10 +84,10 @@
           "app.kubernetes.io/part-of": "tackle"
         }
       },
-      "data": {
-        "database-name": "Y29udHJvbHNfZGI=",
-        "database-password": "Y29udHJvbHM=",
-        "database-user": "Y29udHJvbHM="
+      "stringData": {
+        "database-name": "controls_db",
+        "database-password": "${CONTROLS_DATASOURCE_PASSWORD}",
+        "database-user": "${CONTROLS_DATASOURCE_USERNAME}"
       },
       "type": "Opaque"
     },
@@ -522,7 +522,7 @@
           "app.quarkus.io/vcs-url" : "https://github.com/mrizzi/poc.git",
           "app.quarkus.io/build-timestamp" : "2021-02-10 - 10:53:41 +0000",
           "prometheus.io/scrape" : "true",
-          "prometheus.io/path" : "/metrics",
+          "prometheus.io/path" : "/q/metrics",
           "prometheus.io/port" : "8080"
         },
         "labels" : {
@@ -555,11 +555,8 @@
         "annotations" : {
           "prometheus.io/port" : "8080",
           "prometheus.io/scheme" : "http",
-          "app.quarkus.io/commit-id" : "02a38ddc1102f912d56657eb590911aa9a10b25c",
-          "app.quarkus.io/vcs-url" : "https://github.com/mrizzi/poc.git",
-          "app.quarkus.io/build-timestamp" : "2021-02-10 - 10:53:41 +0000",
           "prometheus.io/scrape" : "true",
-          "prometheus.io/path" : "/metrics"
+          "prometheus.io/path" : "/q/metrics"
         },
         "labels" : {
           "app.kubernetes.io/component" : "rest",
@@ -583,11 +580,8 @@
             "annotations" : {
               "prometheus.io/port" : "8080",
               "prometheus.io/scheme" : "http",
-              "app.quarkus.io/commit-id" : "02a38ddc1102f912d56657eb590911aa9a10b25c",
-              "app.quarkus.io/vcs-url" : "https://github.com/mrizzi/poc.git",
-              "app.quarkus.io/build-timestamp" : "2021-02-10 - 10:53:41 +0000",
               "prometheus.io/scrape" : "true",
-              "prometheus.io/path" : "/metrics"
+              "prometheus.io/path" : "/q/metrics"
             },
             "labels" : {
               "app.kubernetes.io/component" : "rest",
@@ -603,6 +597,22 @@
                 "valueFrom" : {
                   "fieldRef" : {
                     "fieldPath" : "metadata.namespace"
+                  }
+                }
+              }, {
+                "name" : "QUARKUS_DATASOURCE_USERNAME",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "controls-postgresql",
+                    "key": "database-user"
+                  }
+                }
+              }, {
+                "name" : "QUARKUS_DATASOURCE_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "controls-postgresql",
+                    "key": "database-password"
                   }
                 }
               } ],
