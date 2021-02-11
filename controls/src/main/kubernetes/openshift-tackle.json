@@ -713,6 +713,26 @@
                     "value": "http://keycloak:8080"
                   }
                 ],
+                "readinessProbe": {
+                  "initialDelaySeconds": 10,
+                  "httpGet": {
+                    "path": "/",
+                    "scheme": "HTTP",
+                    "port": 8080
+                  },
+                  "periodSeconds": 5
+                },
+                "livenessProbe": {
+                  "initialDelaySeconds": 10,
+                  "exec": {
+                    "command": [
+                      "/bin/sh",
+                      "-c",
+                      "[ -f /run/nginx.pid ] && ps -A | grep nginx"
+                    ]
+                  },
+                  "periodSeconds": 5
+                },
                 "resources": {},
                 "terminationMessagePath": "/dev/termination-log",
                 "terminationMessagePolicy": "File",
