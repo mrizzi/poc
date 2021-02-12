@@ -25,11 +25,4 @@ public class BusinessService extends AbstractEntity {
     @JsonIgnoreProperties({"jobFunction", "email"})
     @Filterable(filterName = "owner.displayName")
     public Stakeholder owner;
-
-/*
-    public static boolean deleteById(Object id) {
-//        return AbstractEntity.deleteById(id);
-        return update("deleted = true where id = ?1", id) == 1;
-    }
-*/
 }
