@@ -57,16 +57,5 @@ public abstract class AbstractEntity extends PanacheEntity {
         return "";
     }
 
-    /*
-    public static boolean deleteById(Object id) {
-        final int rowsUpdated = update("deleted = true where id = ?1", id);
-        return rowsUpdated == 1;
-    }
-
-    public static boolean logicallyDeleteById(Object id) {
-        return update("deleted = true where id = ?1", id) == 1;
-    }
-*/
-
 }
 

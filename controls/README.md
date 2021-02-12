@@ -48,8 +48,8 @@ It works the same with Docker just replacing `podman` with `docker` in the above
 
 ```Shell
 $ podman run -it --name keycloak --rm \
-            -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -e KEYCLOAK_IMPORT=/tmp/quarkus-realm.json \
-            -e DB_VENDOR=h2 -p 8180:8080 -p 8543:8443 -v ./src/main/resources/keycloak:/tmp \
+            -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -e KEYCLOAK_IMPORT=/tmp/keycloak/quarkus-realm.json \
+            -e DB_VENDOR=h2 -p 8180:8080 -p 8543:8443 -v ./src/main/resources/keycloak:/tmp/keycloak \
             jboss/keycloak:12.0.2
 ```
 
@@ -327,12 +327,12 @@ $ kubectl rollout restart deployment controls -n tackle
 
 ```shell
 $ export access_token=$(\
-    curl -X POST $(minikube service --url=true keycloak)/auth/realms/quarkus/protocol/openid-connect/token \
+    curl -X POST $(minikube service --url=true keycloak -n tackle)/auth/realms/quarkus/protocol/openid-connect/token \
     --user backend-service:secret \
     -H 'content-type: application/x-www-form-urlencoded' \
     -d 'username=alice&password=alice&grant_type=password' | jq --raw-output '.access_token' \
  )
-$ curl -X GET "$(minikube service --url=true controls)/controls/business-service?description=ser&sort=name" \
+$ curl -X GET "$(minikube service --url=true controls -n tackle)/controls/business-service?description=ser&sort=name" \
   -H 'Accept: application/json' -H "Authorization: Bearer "$access_token |jq .
 ```
 
