@@ -521,7 +521,7 @@ data:
           } ],
           "security-admin-console" : [ ],
           "admin-cli" : [ ],
-          "controls-ui": [],
+          "tackle-ui": [],
           "backend-service" : [ {
             "id" : "df147a91-6da7-4bbc-866c-f30cf99b2637",
             "name" : "uma_protection",
@@ -667,7 +667,7 @@ data:
         "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
       }, {
           "id": "7f2cd8e2-dac3-41d8-b88b-bcd179f2bd39",
-          "clientId": "controls-ui",
+          "clientId": "tackle-ui",
           "surrogateAuthRequired": false,
           "enabled": true,
           "alwaysDisplayInConsole": false,
@@ -2133,7 +2133,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: controls-ui
+                name: tackle-ui
                 port:
                   number: 8080
 ---
@@ -2153,34 +2153,34 @@ spec:
 #          - path: /
 #            pathType: ImplementationSpecific
 #            backend:
-#              serviceName: controls-ui
+#              serviceName: tackle-ui
 #              servicePort: 8080
 #---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: controls-ui
+  name: tackle-ui
   labels:
-    app.kubernetes.io/name: controls-ui
+    app.kubernetes.io/name: tackle-ui
     app.kubernetes.io/component: ui
-    app.kubernetes.io/instance: controls-ui
+    app.kubernetes.io/instance: tackle-ui
     app.kubernetes.io/part-of: tackle
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: controls-ui
-      app.kubernetes.io/instance: controls-ui
+      app.kubernetes.io/name: tackle-ui
+      app.kubernetes.io/instance: tackle-ui
       app.kubernetes.io/part-of: tackle
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: controls-ui
-        app.kubernetes.io/instance: controls-ui
+        app.kubernetes.io/name: tackle-ui
+        app.kubernetes.io/instance: tackle-ui
         app.kubernetes.io/part-of: tackle
     spec:
       containers:
-        - name: controls-ui
+        - name: tackle-ui
           image: quay.io/carlosthe19916/controls-ui:master
           ports:
             - containerPort: 8080
@@ -2193,7 +2193,7 @@ spec:
             - name: SSO_REALM
               value: quarkus
             - name: SSO_CLIENT_ID
-              value: controls-ui
+              value: tackle-ui
             - name: SSO_SERVER_URL
               value: 'http://keycloak:8080'
           livenessProbe:
@@ -2231,11 +2231,11 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: controls-ui
+  name: tackle-ui
   labels:
-    app.kubernetes.io/name: controls-ui
+    app.kubernetes.io/name: tackle-ui
     app.kubernetes.io/component: ui
-    app.kubernetes.io/instance: controls-ui
+    app.kubernetes.io/instance: tackle-ui
     app.kubernetes.io/part-of: tackle
 spec:
   ports:
@@ -2244,7 +2244,7 @@ spec:
       port: 8080
       targetPort: 8080
   selector:
-    app.kubernetes.io/name: controls-ui
+    app.kubernetes.io/name: tackle-ui
 ---
 apiVersion: v1
 kind: Service
