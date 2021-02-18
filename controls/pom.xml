@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.tackle</groupId>
   <artifactId>poc-controls</artifactId>
-  <version>0.2</version>
+  <version>0.2-SNAPSHOT</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <docker-plugin.version>0.28.0</docker-plugin.version>
