@@ -18,6 +18,20 @@
   "message": "Tackle has been installed. The username/password for accessing the PostgreSQL database is ${CONTROLS_DATASOURCE_USERNAME}/${CONTROLS_DATASOURCE_PASSWORD}.",
   "parameters": [
     {
+      "displayName": "Controls REST container images",
+      "description": "The value of the Controls REST container image to be used",
+      "name": "CONTROLS_REST_CONTAINER_IMAGE",
+      "value": "quay.io/mrizzi/poc-controls:0.0.1-SNAPSHOT-native",
+      "required": true
+    },
+    {
+      "displayName": "Controls UI container images",
+      "description": "The value of the Controls UI container image to be used",
+      "name": "CONTROLS_UI_CONTAINER_IMAGE",
+      "value": "quay.io/carlosthe19916/controls-ui:master",
+      "required": true
+    },
+    {
       "displayName": "Controls Database Username",
       "description": "Controls database user name",
       "name": "CONTROLS_DATASOURCE_USERNAME",
@@ -47,20 +61,6 @@
       "name": "KEYCLOAK_DATASOURCE_PASSWORD",
       "from": "[a-zA-Z0-9]{8}",
       "generate": "expression",
-      "required": true
-    },
-    {
-      "displayName": "Controls REST container images",
-      "description": "The value of the Controls REST container image to be used",
-      "name": "CONTROLS_REST_CONTAINER_IMAGE",
-      "value": "quay.io/mrizzi/poc-controls:0.0.1-SNAPSHOT-native",
-      "required": true
-    },
-    {
-      "displayName": "Controls UI container images",
-      "description": "The value of the Controls UI container image to be used",
-      "name": "CONTROLS_UI_CONTAINER_IMAGE",
-      "value": "quay.io/carlosthe19916/controls-ui:master",
       "required": true
     }
   ],
@@ -221,7 +221,7 @@
             "containers": [
               {
                 "name": "postgres",
-                "image": "postgres:10.6",
+                "image": "quay.io/mrizzi/postgres:10.6",
                 "ports": [
                   {
                     "containerPort": 5432,
@@ -288,7 +288,7 @@
                 },
                 "terminationMessagePath": "/dev/termination-log",
                 "terminationMessagePolicy": "File",
-                "imagePullPolicy": "Always",
+                "imagePullPolicy": "IfNotPresent",
                 "volumeMounts": [
                   {
                     "name": "keycloak-postgresql-data",
@@ -446,22 +446,22 @@
                     "path": "/auth/realms/master",
                     "port": 8080
                   },
-                  "initialDelaySeconds": 30,
+                  "initialDelaySeconds": 60,
                   "timeoutSeconds": 1,
                   "periodSeconds": 10,
                   "successThreshold": 1,
-                  "failureThreshold": 3
+                  "failureThreshold": 6
                 },
                 "livenessProbe": {
                   "httpGet": {
                     "path": "/auth/realms/master",
                     "port": 8080
                   },
-                  "initialDelaySeconds": 60,
+                  "initialDelaySeconds": 120,
                   "timeoutSeconds": 1,
                   "periodSeconds": 10,
                   "successThreshold": 1,
-                  "failureThreshold": 3
+                  "failureThreshold": 6
                 }
               }
             ]
@@ -555,7 +555,7 @@
             "containers": [
               {
                 "name": "postgres",
-                "image": "postgres:10.6",
+                "image": "quay.io/mrizzi/postgres:10.6",
                 "ports": [
                   {
                     "containerPort": 5432,
@@ -622,7 +622,7 @@
                 },
                 "terminationMessagePath": "/dev/termination-log",
                 "terminationMessagePolicy": "File",
-                "imagePullPolicy": "Always",
+                "imagePullPolicy": "IfNotPresent",
                 "volumeMounts": [
                   {
                     "name": "controls-postgresql-data",
