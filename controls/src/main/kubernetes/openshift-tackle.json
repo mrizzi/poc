@@ -375,6 +375,28 @@
                 "configMap": {
                   "name": "keycloak-realm"
                 }
+              },
+              {
+                "name": "theme-volume",
+                "emptyDir": {}
+              }
+            ],
+            "initContainers": [
+              {
+                "name": "keycloak-theme",
+                "image": "busybox",
+                "command": [
+                  "wget",
+                  "-P",
+                  "deployments",
+                  "https://raw.githubusercontent.com/carlosthe19916/controls-keycloak-theme/master/tackle-keycloak-theme-0.2-SNAPSHOT.jar"
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "theme-volume",
+                    "mountPath": "/deployments"
+                  }
+                ]
               }
             ],
             "containers": [
@@ -439,6 +461,10 @@
                   {
                     "name": "config-volume",
                     "mountPath": "/etc/config"
+                  },
+                  {
+                    "name": "theme-volume",
+                    "mountPath": "/opt/jboss/keycloak/standalone/deployments"
                   }
                 ],
                 "readinessProbe": {
