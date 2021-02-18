@@ -217,6 +217,19 @@ spec:
         - name: config-volume
           configMap:
             name: keycloak-realm
+        - name: theme-volume
+          emptyDir: {}
+      initContainers:
+        - name: keycloak-theme
+          image: busybox
+          command:
+            - wget
+            - "-P"
+            - "deployments"
+            - "https://raw.githubusercontent.com/carlosthe19916/controls-keycloak-theme/master/tackle-keycloak-theme-0.2-SNAPSHOT.jar"
+          volumeMounts:
+            - name: theme-volume
+              mountPath: /deployments
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:12.0.2
@@ -251,6 +264,8 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /etc/config
+            - name: theme-volume
+              mountPath: /opt/jboss/keycloak/standalone/deployments
           readinessProbe:
             httpGet:
               path: /auth/realms/master
@@ -276,6 +291,7 @@ data:
     {
       "id" : "11d78bf6-6d10-4484-baba-a1388379d68b",
       "realm" : "quarkus",
+      "loginTheme": "konveyor",
       "notBefore" : 0,
       "revokeRefreshToken" : false,
       "refreshTokenMaxReuse" : 0,
