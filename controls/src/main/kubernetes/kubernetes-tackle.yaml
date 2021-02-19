@@ -221,7 +221,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: keycloak-theme
-          image: busybox
+          image: quay.io/mrizzi/busybox:1.32.1
           command:
             - wget
             - "-P"
