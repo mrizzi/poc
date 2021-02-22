@@ -76,7 +76,7 @@ $ curl -X GET 'http://localhost:8080/controls/business-service?description=ser&s
 
 ### Insert test data
 
-To help the development, there's a script that inserts a stakeholder and three business services.  
+To help the development, there's a script that inserts three stakeholders and three business services.  
 To run it, execute the command:
 ```shell
 $ ./src/main/resources/import-curl.sh localhost:8080
