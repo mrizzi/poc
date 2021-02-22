@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -18,6 +19,7 @@ public abstract class AbstractEntity extends PanacheEntity {
     //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSSSx")
     @JsonIgnore
     @CreationTimestamp
+    @Column(updatable=false)
     public Instant createTime;
     //    @JsonIgnore
     public String createUser;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.DisabledOnNativeImage;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
@@ -25,6 +26,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
 @QuarkusTestResource(PostgreSQLResource.class)
@@ -150,10 +152,17 @@ public class BusinessServiceTest extends SecuredResourceTest {
     }
 
     @Test
+    @DisabledOnNativeImage
     public void testBusinessServiceCreateUpdateAndDeleteEndpoint() {
+        testBusinessServiceCreateUpdateAndDeleteEndpoint(false);
+    }
+
+    protected void testBusinessServiceCreateUpdateAndDeleteEndpoint(boolean nativeExecution) {
+        final String name = "Another Business Service name";
+        final String description = "Another Business Service description";
         BusinessService businessService = new BusinessService();
-        businessService.name = "Another Business Service name";
-        businessService.description = "Another Business Service description";
+        businessService.name = name;
+        businessService.description = description;
 
          Response response = given()
                 .contentType(ContentType.JSON)
@@ -164,12 +173,15 @@ public class BusinessServiceTest extends SecuredResourceTest {
                 .log().all()
                 .statusCode(201).extract().response();
 
+         assertEquals(name, response.path("name"));
+         assertEquals(description, response.path("description"));
          assertEquals("alice", response.path("createUser"));
          assertEquals("alice", response.path("updateUser"));
 
-        Integer businessServiceId = response.path("id");
+        Long businessServiceId = Long.valueOf(response.path("id").toString());
 
-        businessService.name = "Yet another different name";
+        final String newName = "Yet another different name";
+        businessService.name = newName;
         given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -185,8 +197,16 @@ public class BusinessServiceTest extends SecuredResourceTest {
                 .then()
                 .log().all()
                 .statusCode(200)
-                .body("name", is("Yet another different name"),
-                "description", is("Another Business Service description"));
+                .body("name", is(newName),
+                "description", is(description));
+
+        if (!nativeExecution) {
+            BusinessService updatedBusinessServiceFromDb = BusinessService.findById(businessServiceId);
+            assertEquals(newName, updatedBusinessServiceFromDb.name);
+            assertEquals(description, updatedBusinessServiceFromDb.description);
+            assertNotNull(updatedBusinessServiceFromDb.createTime);
+            assertNotNull(updatedBusinessServiceFromDb.updateTime);
+        }
 
         given()
                 .pathParam("id", businessServiceId)
