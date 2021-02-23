@@ -46,12 +46,15 @@ public class FilterBuilder {
                 // https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1
                 if (!filterableFields.contains(key)) throw new WebApplicationException("Malformed syntax for a filter name", BAD_REQUEST);
                 if (queryBuilder.length() != 0) queryBuilder.append(" and ");
+                else queryBuilder.append("WHERE ");
                 queryBuilder.append("( ");
                 AtomicBoolean isFirst = new AtomicBoolean(true);
                 values.forEach(value -> {
                     if (!isFirst.compareAndSet(true, false)) queryBuilder.append(" or ");
                     String randomParameterKey = key.replace('.', '_') + ThreadLocalRandom.current().nextInt(0, 1001);
-                    queryBuilder.append(String.format("lower(%s) LIKE lower(:%s)", key, randomParameterKey));
+                    // https://github.com/quarkusio/quarkus/issues/15088#issuecomment-783454416
+                    // Due to the need of generating queries on our own, where parameters must have a prefix
+                    queryBuilder.append(String.format("lower(%s.%s) LIKE lower(:%s)", ListFilteredResource.DEFAULT_SQL_ROOT_TABLE_ALIAS, key, randomParameterKey));
                     queryParameters.put(randomParameterKey, String.format("%%%s%%", value));
                     rawQueryParams.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
                 });

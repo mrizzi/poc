@@ -290,4 +290,19 @@ public class BusinessServiceTest extends SecuredResourceTest {
                         "_links.size()", is(4));
     }
 
+    @Test
+    public void testBusinessServicesSortOwnerDisplayNameListHalEndpoint() {
+        given()
+                .accept("application/hal+json")
+                .queryParam("sort", "owner.displayName")
+                .when().get(PATH)
+                .then()
+                .statusCode(200)
+                .body("_embedded.business-service.size()", is(3),
+                        "_embedded.business-service.id", containsInRelativeOrder(2, 1, 3),
+                        "_embedded.business-service.name", containsInRelativeOrder("Online Investments service", "Home Banking BU", "Credit Cards BS"),
+                        "_embedded.business-service[1]._links.size()", is(5),
+                        "_embedded.business-service[1]._links.self.href", is("http://localhost:8081/controls/business-service/1"),
+                        "_links.size()", is(4));
+    }
 }
