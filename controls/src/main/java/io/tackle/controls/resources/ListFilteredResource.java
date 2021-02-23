@@ -10,6 +10,8 @@ import io.tackle.controls.resources.filter.Filter;
 import io.tackle.controls.resources.filter.FilterBuilder;
 import io.tackle.controls.resources.hal.HalCollectionEnrichedWrapper;
 
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -52,6 +54,7 @@ public interface ListFilteredResource<Entity extends PanacheEntity> extends Type
     String DEFAULT_VALUE_SORT = "id";
     String QUERY_PARAM_FILTER = "where";
     String DEFAULT_VALUE_FILTER = "";
+    String DEFAULT_SQL_ROOT_TABLE_ALIAS = "table";
 
     default Response list(@QueryParam(QUERY_PARAM_SORT) @DefaultValue(DEFAULT_VALUE_SORT) List var1,
                          @QueryParam(QUERY_PARAM_PAGE) @DefaultValue(DEFAULT_VALUE_PAGE) int var2,
@@ -76,11 +79,15 @@ public interface ListFilteredResource<Entity extends PanacheEntity> extends Type
         while (var8.hasNext()) {
             Object var9 = var8.next();
             if (!((String) var9).startsWith("-")) {
-                var10.and((String) var9);
+                // https://github.com/quarkusio/quarkus/issues/15088#issuecomment-783454416
+                // Due to the need of generating queries on our own, sort parameters must have a prefix
+                var10.and(String.format("%s.%s", DEFAULT_SQL_ROOT_TABLE_ALIAS, (String) var9));
             } else {
                 String var11 = ((String) var9).substring(1);
                 Sort.Direction var12 = Sort.Direction.Descending;
-                var10.and(var11, var12);
+                // https://github.com/quarkusio/quarkus/issues/15088#issuecomment-783454416
+                // Due to the need of generating queries on our own, sort parameters must have a prefix
+                var10.and(String.format("%s.%s", DEFAULT_SQL_ROOT_TABLE_ALIAS, var11), var12);
             }
         }
 
@@ -103,7 +110,7 @@ public interface ListFilteredResource<Entity extends PanacheEntity> extends Type
 
         Page var16 = Page.of(var13, var14);
         // Change to manage filtering
-        int var28 = $$_page_count_list(var16, queryFilter.getQuery(), queryFilter.getQueryParameters());
+        int var28 = $$_page_count_list(var16, generateCountQuery(queryFilter.getQuery()), queryFilter.getQueryParameters());
         ArrayList var26 = new ArrayList(4);
         Page var17 = var16.first();
         UriBuilder var19 = var4.getAbsolutePathBuilder();
@@ -192,13 +199,13 @@ public interface ListFilteredResource<Entity extends PanacheEntity> extends Type
         Object[] var65 = ((List) var26).toArray((Object[]) var64);
         // Change to manage filtering
         // Solution based on using the different query parameters
-        List entities = list(var16, var10, queryFilter.getQuery(), queryFilter.getQueryParameters());
+        List entities = list(var16, var10, generateQuery(queryFilter.getQuery()), queryFilter.getQueryParameters());
         Response.ResponseBuilder var66 = null;
         if (!hal) var66 = Response.ok(entities);
         else {
             HalCollectionEnrichedWrapper var67 = new HalCollectionEnrichedWrapper((Collection) entities, getPanacheEntityType(),
                     ResourceName.fromClass(getPanacheEntityType().getName()),
-                    (long) getPanacheEntityType().getMethod("count", String.class, Map.class).invoke(null, queryFilter.getQuery(), queryFilter.getQueryParameters()));
+                    (long) getPanacheEntityType().getMethod("count", String.class, Map.class).invoke(null, generateCountQuery(queryFilter.getQuery()), queryFilter.getQueryParameters()));
             var67.addLinks((Link[]) var65);
             var66 = Response.ok(var67);
         }
@@ -239,6 +246,33 @@ public interface ListFilteredResource<Entity extends PanacheEntity> extends Type
         PanacheQuery var3 = (PanacheQuery) getPanacheEntityType().getMethod("find", String.class, Sort.class, Map.class).invoke(null, query, var2, queryParams);
         var3.page(var1);
         return var3.list();
+    }
+
+    // https://github.com/quarkusio/quarkus/issues/15088#issuecomment-783454416
+    // Method to cover the need of generating queries on our own
+    default String generateCountQuery(String filterQuery) {
+        return String.format("FROM %s %s %s",getPanacheEntityType().getSimpleName(), DEFAULT_SQL_ROOT_TABLE_ALIAS, filterQuery);
+    }
+
+    // https://github.com/quarkusio/quarkus/issues/15088#issuecomment-783454416
+    // Method to cover the need of generating queries on our own
+    default String generateQuery(String filterQuery) {
+        StringBuilder queryBuilder = new StringBuilder(String.format("SELECT %s FROM ", DEFAULT_SQL_ROOT_TABLE_ALIAS));
+        queryBuilder.append(getPanacheEntityType().getSimpleName());
+        queryBuilder.append(String.format(" %s ", DEFAULT_SQL_ROOT_TABLE_ALIAS));
+        queryBuilder.append(
+            Arrays.stream(getPanacheEntityType().getDeclaredFields())
+                .filter(field ->
+                        // 'ManyToOne' has been tested and it's something we must have
+                        (field.isAnnotationPresent(ManyToOne.class) ||
+                        // 'OneToOne' has just been added for sake of having it done
+                        // without a real use case yet so it can be discussed later
+                        field.isAnnotationPresent(OneToOne.class))
+                ).map(field -> String.format("LEFT JOIN %s.%s ", DEFAULT_SQL_ROOT_TABLE_ALIAS, field.getName()))
+                .collect(Collectors.joining())
+        );
+        queryBuilder.append(filterQuery);
+        return queryBuilder.toString();
     }
 
 }
