@@ -23,7 +23,8 @@ jobs:
           NUMBER: ${{ github.event.issue.number }}
           DESCRIPTION: ${{ github.event.issue.html_url }}
         run: |
-          issue_create.sh
+          ls -l
+          ./issue_create.sh
 
   sync-reopened:
     runs-on: ubuntu-latest
