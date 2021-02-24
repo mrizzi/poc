@@ -23,7 +23,6 @@ jobs:
           NUMBER: ${{ github.event.issue.number }}
           DESCRIPTION: ${{ github.event.issue.html_url }}
         run: |
-          ls -l
           ./issue_create.sh
 
   sync-reopened:
