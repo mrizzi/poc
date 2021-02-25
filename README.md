@@ -13,3 +13,7 @@ More in the project's [README](./kubernetes-quickstart/README.md).
 ### [Controls POC](./controls)
 Code for the Controls application POC covering the Business Service entity.
 More in the project's [README](./controls/README.md).
+
+### [GitHub to Jira issues synchronization](./sync-issues)
+Sample (and working) scripts triggered by the [issues.yml](.github/workflows/issues.yml) GitHub workflow when an issue is opened, closed and reopended to, respectively, create, close and reopen a subtask in Jira.  
+More in the project's [README](./sync-issues/README.md).
