@@ -22,6 +22,7 @@ jobs:
           GH_ISSUE_TITLE: ${{ github.event.issue.title }}
           NUMBER: ${{ github.event.issue.number }}
           DESCRIPTION: ${{ github.event.issue.html_url }}
+          REPOSITORY: ${{ github.event.repository.name }}
         run: |
           ./issue_create.sh
 
@@ -35,6 +36,7 @@ jobs:
           BEARER: ${{ secrets.JIRA_TACKLE_BEARER }}
           GH_ISSUE_TITLE: ${{ github.event.issue.title }}
           NUMBER: ${{ github.event.issue.number }}
+          REPOSITORY: ${{ github.event.repository.name }}
         run: |
           ./issue_transaction.sh 3
 
@@ -48,5 +50,6 @@ jobs:
           BEARER: ${{ secrets.JIRA_TACKLE_BEARER }}
           GH_ISSUE_TITLE: ${{ github.event.issue.title }}
           NUMBER: ${{ github.event.issue.number }}
+          REPOSITORY: ${{ github.event.repository.name }}
         run: |
           ./issue_transaction.sh 2
