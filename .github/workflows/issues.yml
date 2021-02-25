@@ -36,7 +36,7 @@ jobs:
           GH_ISSUE_TITLE: ${{ github.event.issue.title }}
           NUMBER: ${{ github.event.issue.number }}
         run: |
-          ./issue_transaction.sh 4
+          ./issue_transaction.sh 3
 
   sync-closed:
     runs-on: ubuntu-latest
