@@ -1,6 +1,6 @@
 # GitHub to Jira issues synchronization
 
-Sample (and working) scripts triggered by the [issues.yml](../.github/workflows/issues.yml) GitHub workflow when an issue is opened, closed and reopended to, respectively, create, close and reopen a subtask in Jira.  
+Sample (and working) scripts triggered by the [issues.yml](../.github/workflows/issues.yml) GitHub workflow when an issue is opened, closed and reopened to, respectively, create, close and reopen a subtask in Jira.  
 The naming convention for the GitHub issue's title is `[<JIRA_ISSUE_ID>] <TITLE_YOU_WANT>`.  
 In this way, when the GitHub issue is:
 - opened, a **subtask** will be added in Jira to the `<JIRA_ISSUE_ID>` issue with:
