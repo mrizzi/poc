@@ -32,10 +32,10 @@ jobs:
     steps:
       - env:
           BEARER: ${{ secrets.JIRA_TACKLE_BEARER }}
-          JIRA_ISSUE_ID: echo ${{ github.event.issue.title }}|cut -d] -f1|sed 's/[[]//g'
+          GH_ISSUE_TITLE: ${{ github.event.issue.title }}
           NUMBER: ${{ github.event.issue.number }}
         run: |
-          src/main/resources/issue_transaction.sh 4
+          ./issue_transaction.sh 4
 
   sync-closed:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
     steps:
       - env:
           BEARER: ${{ secrets.JIRA_TACKLE_BEARER }}
-          JIRA_ISSUE_ID: echo ${{ github.event.issue.title }}|cut -d] -f1|sed 's/[[]//g'
+          GH_ISSUE_TITLE: ${{ github.event.issue.title }}
           NUMBER: ${{ github.event.issue.number }}
         run: |
-          src/main/resources/issue_transaction.sh 2
+          ./issue_transaction.sh 2
