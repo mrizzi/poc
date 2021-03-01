@@ -28,6 +28,10 @@ public abstract class SecuredResourceTest {
         RestAssured.authentication = oauth2(ACCESS_TOKEN);
     }
 
+    /**
+     * Maybe too much to execute it every time a class extends this one but, right now,
+     * the "better safe than sorry" approach with security is the winning one.
+     */
     @Test
     public void testUnauthorized(){
         given().auth().oauth2("")
@@ -35,7 +39,6 @@ public abstract class SecuredResourceTest {
                 .queryParam("sort", "id")
                 .when().get(PATH)
                 .then()
-                .log().all()
                 .statusCode(401);
     }
 }
