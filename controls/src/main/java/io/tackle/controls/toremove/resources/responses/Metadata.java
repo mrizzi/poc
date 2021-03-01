@@ -1,4 +1,4 @@
-package io.tackle.controls.resources.responses;
+package io.tackle.controls.toremove.resources.responses;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 

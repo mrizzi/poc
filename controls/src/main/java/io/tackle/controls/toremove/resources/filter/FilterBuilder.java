@@ -1,6 +1,6 @@
-package io.tackle.controls.resources.filter;
+package io.tackle.controls.toremove.resources.filter;
 
-import io.tackle.controls.resources.ListFilteredResource;
+import io.tackle.commons.resources.ListFilteredResource;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;

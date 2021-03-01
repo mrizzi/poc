@@ -1,4 +1,4 @@
-package io.tackle.controls.resources.hal;
+package io.tackle.controls.toremove.resources.hal;
 
 import io.quarkus.rest.data.panache.runtime.hal.HalLink;
 import io.quarkus.rest.data.panache.runtime.hal.HalLinksProvider;

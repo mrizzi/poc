@@ -1,4 +1,4 @@
-package io.tackle.controls.resources.hal;
+package io.tackle.controls.toremove.resources.hal;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

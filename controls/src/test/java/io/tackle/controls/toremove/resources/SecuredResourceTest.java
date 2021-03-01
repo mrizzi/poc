@@ -1,4 +1,4 @@
-package io.tackle.controls.resources;
+package io.tackle.controls.toremove.resources;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;

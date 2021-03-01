@@ -1,4 +1,4 @@
-package io.tackle.controls.testcontainers.postresql;
+package io.tackle.controls.toremove.testcontainers.postresql;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import org.testcontainers.containers.PostgreSQLContainer;

@@ -1,0 +1,60 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: controls-keycloak
+  labels:
+    app: sso
+spec:
+  instances: 1
+  extensions:
+    - >-
+      https://github.com/aerogear/keycloak-metrics-spi/releases/download/1.0.4/keycloak-metrics-spi-1.0.4.jar
+  externalAccess:
+    enabled: true
+---
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakRealm
+metadata:
+  name: controls-keycloakrealm
+spec:
+  realm:
+    id: quarkus
+    realm: quarkus
+    enabled: true
+    displayName: Controls Realm
+  instanceSelector:
+    matchLabels:
+      app: sso
+---
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: client-secret
+  labels:
+    app: sso
+spec:
+  realmSelector:
+    matchLabels:
+      app: sso
+  client:
+    clientId: backend-service
+    secret: secret
+    clientAuthenticatorType: client-secret
+---
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakUser
+metadata:
+  name: alice-realm-user
+  labels:
+    app: sso
+spec:
+  user:
+    username: alice
+    firstName: John
+    lastName: Doe
+    email: user@example.com
+    enabled: true
+    emailVerified: false
+  realmSelector:
+    matchLabels:
+      app: sso

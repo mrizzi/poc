@@ -1,14 +1,14 @@
-package io.tackle.controls.resources;
+package io.tackle.controls.toremove.resources;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.rest.data.panache.deployment.utils.ResourceName;
-import io.tackle.controls.annotations.Filterable;
-import io.tackle.controls.resources.filter.Filter;
-import io.tackle.controls.resources.filter.FilterBuilder;
-import io.tackle.controls.resources.hal.HalCollectionEnrichedWrapper;
+import io.tackle.commons.annotations.Filterable;
+import io.tackle.controls.toremove.resources.filter.Filter;
+import io.tackle.controls.toremove.resources.filter.FilterBuilder;
+import io.tackle.controls.toremove.resources.hal.HalCollectionEnrichedWrapper;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;

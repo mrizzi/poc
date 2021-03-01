@@ -1,4 +1,4 @@
-package io.tackle.controls.testcontainers.podman;
+package io.tackle.controls.toremove.testcontainers.podman;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 

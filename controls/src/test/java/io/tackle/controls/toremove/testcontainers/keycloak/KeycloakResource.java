@@ -1,4 +1,4 @@
-package io.tackle.controls.testcontainers.keycloak;
+package io.tackle.controls.toremove.testcontainers.keycloak;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import org.testcontainers.containers.BindMode;

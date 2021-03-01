@@ -1,4 +1,4 @@
-package io.tackle.controls.resources.filter;
+package io.tackle.controls.toremove.resources.filter;
 
 import java.util.List;
 import java.util.Map;

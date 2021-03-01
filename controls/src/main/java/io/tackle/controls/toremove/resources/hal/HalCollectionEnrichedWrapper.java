@@ -1,7 +1,7 @@
-package io.tackle.controls.resources.hal;
+package io.tackle.controls.toremove.resources.hal;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.tackle.controls.resources.responses.Metadata;
+import io.tackle.controls.toremove.resources.responses.Metadata;
 import io.quarkus.rest.data.panache.runtime.hal.HalCollectionWrapper;
 
 import java.util.Collection;

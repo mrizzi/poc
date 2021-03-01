@@ -1,4 +1,4 @@
-package io.tackle.controls.entities;
+package io.tackle.controls.toremove.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;

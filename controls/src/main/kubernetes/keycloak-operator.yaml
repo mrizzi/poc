@@ -1,0 +1,26 @@
+# following https://operatorhub.io/operator/keycloak-operator
+# from https://operatorhub.io/install/keycloak-operator.yaml
+#apiVersion: v1
+#kind: Namespace
+#metadata:
+#  name: my-keycloak-operator
+#---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: operatorgroup
+  namespace: default
+spec:
+  targetNamespaces:
+    - default
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: controls-keycloak-operator
+  namespace: default
+spec:
+  channel: alpha
+  name: keycloak-operator
+  source: operatorhubio-catalog
+  sourceNamespace: olm
