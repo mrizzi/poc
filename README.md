@@ -17,3 +17,7 @@ More in the project's [README](./controls/README.md).
 ### [GitHub to Jira issues synchronization](./sync-issues)
 Sample (and working) scripts triggered by the [issues.yml](.github/workflows/issues.yml) GitHub workflow when an issue is opened, closed and reopended to, respectively, create, close and reopen a subtask in Jira.  
 More in the project's [README](./sync-issues/README.md).
+
+### [commons-rest](./commons-rest-parent)
+REST library to support a consistent development of microservices.  
+More in the project's [README](./commons-rest-parent/README.md).  
