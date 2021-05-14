@@ -21,3 +21,6 @@ More in the project's [README](./sync-issues/README.md).
 ### [commons-rest](./commons-rest-parent)
 REST library to support a consistent development of microservices.  
 More in the project's [README](./commons-rest-parent/README.md).  
+
+### Quarkus with Kafka and Avro
+Separate consumer ([kafka-and-avro-consumer](./kafka-and-avro-consumer)) and producer ([kafka-and-avro-producer](./kafka-and-avro-producer)) projects to implement and evaluate a reliable way of integrating them using [Apicurio Registry](https://www.apicur.io/registry/).  
