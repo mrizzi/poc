@@ -1,0 +1,4 @@
+FROM quay.io/mrizzi/apicurio-registry-mem:latest-snapshot
+
+ADD schema_bundle.zip /tmp/registry/
+ENV REGISTRY_IMPORT=/tmp/registry/schema_bundle.zip
