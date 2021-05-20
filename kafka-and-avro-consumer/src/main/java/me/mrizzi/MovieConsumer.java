@@ -13,7 +13,8 @@ public class MovieConsumer {
 
     @Incoming("movies-from-kafka")
     public void receive(Movie movie) {
-        LOGGER.infof("Received movie: %s (%d)", movie.getTitle(), movie.getYear());
+        if (movie != null) LOGGER.infof("Received movie: %s (%d)", movie.getTitle(), movie.getYear());
+        else LOGGER.warn("Null movie");
     }
 
 }
