@@ -26,8 +26,9 @@ public class MovieResource {
     @POST
     public Response enqueueMovie(Movie movie) {
         LOGGER.infof("Sending movie %s to Kafka", movie.getTitle());
-        emitter.send(movie);
-        LOGGER.infof("Sent movie %s to Kafka", movie.getTitle());
+        Movie anotherMovie = Movie.newBuilder().setTitle("Back to the Future III").setYear(1990).build();
+        emitter.send(anotherMovie);
+        LOGGER.infof("Sent movie %s to Kafka", anotherMovie.getTitle());
         return Response.accepted().build();
     }
 
