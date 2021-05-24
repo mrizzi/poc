@@ -20,6 +20,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.Base64;
 import java.util.List;
 
@@ -32,11 +33,8 @@ public class PostgreSQLController extends AbstractController implements Resource
     public static final String DATABASE_USER = "database-user"; 
     private static final String USERNAME_FORMAT = "user-%s";
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final KubernetesClient kubernetesClient;
-
-    public PostgreSQLController(KubernetesClient kubernetesClient) {
-        this.kubernetesClient = kubernetesClient;
-    }
+    @Inject
+    KubernetesClient kubernetesClient;
 
     @Override
     public UpdateControl<PostgreSQL> createOrUpdateResource(PostgreSQL postgreSQL, Context<PostgreSQL> context) {
