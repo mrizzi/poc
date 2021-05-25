@@ -25,6 +25,7 @@ public class TackleController implements ResourceController<Tackle> {
         String namespace = tackle.getMetadata().getNamespace();
         kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).delete(kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).delete(kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).list().getItems());
+        kubernetesClient.customResources(Rest.class).inNamespace(namespace).delete(kubernetesClient.customResources(Rest.class).inNamespace(namespace).list().getItems());
         return DeleteControl.DEFAULT_DELETE;
     }
 
@@ -55,6 +56,15 @@ public class TackleController implements ResourceController<Tackle> {
         MixedOperation<Keycloak, KubernetesResourceList<Keycloak>, Resource<Keycloak>> keycloakClient = kubernetesClient.customResources(Keycloak.class);
         Keycloak keycloak = keycloakClient.load(TackleController.class.getResourceAsStream("keycloak/keycloak.yaml")).get();
         keycloakClient.inNamespace(namespace).createOrReplace(keycloak);
+
+        // deploy REST services instance
+        MixedOperation<Rest, KubernetesResourceList<Rest>, Resource<Rest>> restClient = kubernetesClient.customResources(Rest.class);
+        Rest controls = restClient.load(TackleController.class.getResourceAsStream("rest/controls-rest.yaml")).get();
+        restClient.inNamespace(namespace).createOrReplace(controls);
+        Rest applicationInventory = restClient.load(TackleController.class.getResourceAsStream("rest/application-inventory-rest.yaml")).get();
+        restClient.inNamespace(namespace).createOrReplace(applicationInventory);
+        Rest pathfinder = restClient.load(TackleController.class.getResourceAsStream("rest/pathfinder-rest.yaml")).get();
+        restClient.inNamespace(namespace).createOrReplace(pathfinder);
 
         BasicStatus status = new BasicStatus();
         tackle.setStatus(status);
