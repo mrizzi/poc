@@ -41,7 +41,7 @@ public class PostgreSQLController extends AbstractController implements Resource
         String namespace = postgreSQL.getMetadata().getNamespace();
         String name = metadataName(postgreSQL, RESOURCE_NAME_SUFFIX);
 
-        Secret secret = loadYaml(Secret.class, "postgresql-secret.yaml");
+        Secret secret = loadYaml(Secret.class, "templates/postgresql-secret.yaml");
         applyDefaultMetadata(secret, name, namespace);
         // worth letting the user setting them?
         String password = RandomStringUtils.randomAlphanumeric(16);
@@ -55,10 +55,10 @@ public class PostgreSQLController extends AbstractController implements Resource
                 .getData()
                 .put(DATABASE_USER, Base64.getEncoder().encodeToString(String.format(USERNAME_FORMAT, RandomStringUtils.randomAlphanumeric(4)).getBytes()));
 
-        PersistentVolumeClaim pvc = loadYaml(PersistentVolumeClaim.class, "postgresql-persistentvolumeclaim.yaml");
+        PersistentVolumeClaim pvc = loadYaml(PersistentVolumeClaim.class, "templates/postgresql-persistentvolumeclaim.yaml");
         applyDefaultMetadata(pvc, name, namespace);
 
-        Deployment deployment = loadYaml(Deployment.class, "postgresql-deployment.yaml");
+        Deployment deployment = loadYaml(Deployment.class, "templates/postgresql-deployment.yaml");
         applyDefaultMetadata(deployment, name, namespace);
         deployment
                 .getSpec()
@@ -104,7 +104,7 @@ public class PostgreSQLController extends AbstractController implements Resource
                 .get(0)
                 .setName(name);
         
-        Service service = loadYaml(Service.class, "postgresql-service.yaml");
+        Service service = loadYaml(Service.class, "templates/postgresql-service.yaml");
         applyDefaultMetadata(service, name, namespace);
         service
                 .getSpec()
