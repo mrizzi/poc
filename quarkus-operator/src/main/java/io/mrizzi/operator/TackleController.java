@@ -24,6 +24,7 @@ public class TackleController implements ResourceController<Tackle> {
     public DeleteControl deleteResource(Tackle tackle, Context<Tackle> context) {
         String namespace = tackle.getMetadata().getNamespace();
         kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).delete(kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).list().getItems());
+        kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).delete(kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).list().getItems());
         return DeleteControl.DEFAULT_DELETE;
     }
 
@@ -31,6 +32,7 @@ public class TackleController implements ResourceController<Tackle> {
     public UpdateControl<Tackle> createOrUpdateResource(Tackle tackle, Context<Tackle> context) {
         String namespace = tackle.getMetadata().getNamespace();
 
+        // deploy all DB instances
         MixedOperation<PostgreSQL, KubernetesResourceList<PostgreSQL>, Resource<PostgreSQL>> postgreSQLClient = kubernetesClient.customResources(PostgreSQL.class);
 
         PostgreSQL postgreSQLKeycloak = postgreSQLClient.load(TackleController.class.getResourceAsStream("postgresql/keycloak-postgresql.yaml")).get();
@@ -48,6 +50,11 @@ public class TackleController implements ResourceController<Tackle> {
         PostgreSQL postgreSQLPathfinder = postgreSQLClient.load(TackleController.class.getResourceAsStream("postgresql/pathfinder-postgresql.yaml")).get();
         postgreSQLPathfinder.getMetadata().setNamespace(namespace);
         postgreSQLClient.inNamespace(namespace).createOrReplace(postgreSQLPathfinder);
+
+        // deploy Keycloak instance
+        MixedOperation<Keycloak, KubernetesResourceList<Keycloak>, Resource<Keycloak>> keycloakClient = kubernetesClient.customResources(Keycloak.class);
+        Keycloak keycloak = keycloakClient.load(TackleController.class.getResourceAsStream("keycloak/keycloak.yaml")).get();
+        keycloakClient.inNamespace(namespace).createOrReplace(keycloak);
 
         BasicStatus status = new BasicStatus();
         tackle.setStatus(status);
