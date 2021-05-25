@@ -26,6 +26,7 @@ public class TackleController implements ResourceController<Tackle> {
         kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).delete(kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).delete(kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(Rest.class).inNamespace(namespace).delete(kubernetesClient.customResources(Rest.class).inNamespace(namespace).list().getItems());
+        kubernetesClient.customResources(Ui.class).inNamespace(namespace).delete(kubernetesClient.customResources(Ui.class).inNamespace(namespace).list().getItems());
         return DeleteControl.DEFAULT_DELETE;
     }
 
@@ -65,6 +66,11 @@ public class TackleController implements ResourceController<Tackle> {
         restClient.inNamespace(namespace).createOrReplace(applicationInventory);
         Rest pathfinder = restClient.load(TackleController.class.getResourceAsStream("rest/pathfinder-rest.yaml")).get();
         restClient.inNamespace(namespace).createOrReplace(pathfinder);
+
+        // deploy the UI instance
+        MixedOperation<Ui, KubernetesResourceList<Ui>, Resource<Ui>> uiClient = kubernetesClient.customResources(Ui.class);
+        Ui ui = uiClient.load(TackleController.class.getResourceAsStream("ui/tackle-ui.yaml")).get();
+        uiClient.inNamespace(namespace).createOrReplace(ui);
 
         BasicStatus status = new BasicStatus();
         tackle.setStatus(status);
