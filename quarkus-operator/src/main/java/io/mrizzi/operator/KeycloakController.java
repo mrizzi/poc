@@ -25,7 +25,6 @@ import java.util.List;
 @Controller
 public class KeycloakController extends AbstractController implements ResourceController<Keycloak> {
 
-    public static final String RESOURCE_NAME_SUFFIX = "keycloak";
     public static final String ADMIN_USERNAME = "admin-username";
     public static final String ADMIN_PASSWORD = "admin-password";
 
@@ -37,7 +36,8 @@ public class KeycloakController extends AbstractController implements ResourceCo
     @Override
     public UpdateControl<Keycloak> createOrUpdateResource(Keycloak keycloak, Context<Keycloak> context) {
         String namespace = keycloak.getMetadata().getNamespace();
-        String name = metadataName(keycloak, RESOURCE_NAME_SUFFIX);
+        // Keycloak is unique, no need for suffixes in the name
+        String name = metadataName(keycloak);
 
         Secret secret = kubernetesClient.secrets().load(getClass().getResourceAsStream("templates/keycloak-secret.yaml")).get();
         applyDefaultMetadata(secret, name, namespace);
@@ -130,7 +130,7 @@ public class KeycloakController extends AbstractController implements ResourceCo
     @Override
     public DeleteControl deleteResource(Keycloak keycloak, Context<Keycloak> context) {
         String namespace = keycloak.getMetadata().getNamespace();
-        String name = metadataName(keycloak, RESOURCE_NAME_SUFFIX);
+        String name = metadataName(keycloak);
         log.infof("Execution deleteResource for '%s' in namespace '%s'", name, namespace);
 
         log.infof("Deleting Service '%s' in namespace '%s'", name, namespace);
@@ -166,6 +166,17 @@ public class KeycloakController extends AbstractController implements ResourceCo
             configMap.delete();
         }
         log.infof("Deleted ConfigMap '%s' in namespace '%s'", name, namespace);
+
+        log.infof("Deleting Secret '%s' in namespace '%s'", name, namespace);
+        Resource<Secret> secret =
+                kubernetesClient
+                        .secrets()
+                        .inNamespace(namespace)
+                        .withName(name);
+        if (secret.get() != null) {
+            secret.delete();
+        }
+        log.infof("Deleted Secret '%s' in namespace '%s'", name, namespace);
 
         return DeleteControl.DEFAULT_DELETE;
     }
