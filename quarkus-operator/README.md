@@ -1,9 +1,9 @@
 # quarkus-operator project
 
-## Create CRDs
+## Create namespace and CRDs
 ```shell
 $ kubectl create namespace tackle-operator
-$ kubectl apply -f src/main/resources/k8s/crds/crds.yaml -n tackle-operator
+$ kubectl apply -f src/main/resources/k8s/crds/crds.yaml
 ```
 
 ## Start in dev mode
@@ -23,7 +23,7 @@ $ kubectl delete -f src/main/resources/k8s/tackle/tackle.yaml -n tackle-operator
 
 ## Delete CRDs
 ```shell
-$ kubectl delete -f src/main/resources/k8s/crds/crds.yaml -n tackle-operator
+$ kubectl delete -f src/main/resources/k8s/crds/crds.yaml
 ```
 
 ## TO BE REMOVED
