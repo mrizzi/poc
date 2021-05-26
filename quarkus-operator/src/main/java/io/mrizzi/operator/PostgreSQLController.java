@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import java.util.Base64;
 import java.util.List;
 
-@Controller
+@Controller(namespaces = Controller.WATCH_CURRENT_NAMESPACE)
 public class PostgreSQLController extends AbstractController implements ResourceController<PostgreSQL> {
 
     public static final String RESOURCE_NAME_SUFFIX = "postgresql"; 

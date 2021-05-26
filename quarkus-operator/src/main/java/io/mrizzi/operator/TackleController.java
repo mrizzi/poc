@@ -13,7 +13,7 @@ import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 
-@Controller
+@Controller(namespaces = Controller.WATCH_CURRENT_NAMESPACE)
 public class TackleController implements ResourceController<Tackle> {
 
     private final Logger log = Logger.getLogger(getClass());

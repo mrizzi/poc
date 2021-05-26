@@ -17,7 +17,7 @@ import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 
-@Controller
+@Controller(namespaces = Controller.WATCH_CURRENT_NAMESPACE)
 public class UiController extends AbstractController implements ResourceController<Ui> {
 
     private static final String RESOURCE_NAME_SUFFIX = "ui"; 

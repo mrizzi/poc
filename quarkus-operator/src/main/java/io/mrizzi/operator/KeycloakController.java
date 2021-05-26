@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import java.util.Base64;
 import java.util.List;
 
-@Controller
+@Controller(namespaces = Controller.WATCH_CURRENT_NAMESPACE)
 public class KeycloakController extends AbstractController implements ResourceController<Keycloak> {
 
     public static final String ADMIN_USERNAME = "admin-username";

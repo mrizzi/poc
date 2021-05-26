@@ -17,7 +17,7 @@ import org.jboss.logging.Logger;
 import javax.inject.Inject;
 import java.util.List;
 
-@Controller
+@Controller(namespaces = Controller.WATCH_CURRENT_NAMESPACE)
 public class RestController extends AbstractController implements ResourceController<Rest> {
 
     private static final String RESOURCE_NAME_SUFFIX = "rest"; 
