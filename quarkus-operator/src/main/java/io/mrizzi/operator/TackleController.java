@@ -1,6 +1,7 @@
 package io.mrizzi.operator;
 
 import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -9,9 +10,12 @@ import io.javaoperatorsdk.operator.api.Controller;
 import io.javaoperatorsdk.operator.api.DeleteControl;
 import io.javaoperatorsdk.operator.api.ResourceController;
 import io.javaoperatorsdk.operator.api.UpdateControl;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import java.util.Collections;
+import java.util.Map;
 
 @Controller(namespaces = Controller.WATCH_CURRENT_NAMESPACE)
 public class TackleController implements ResourceController<Tackle> {
@@ -27,12 +31,31 @@ public class TackleController implements ResourceController<Tackle> {
         kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).delete(kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(Rest.class).inNamespace(namespace).delete(kubernetesClient.customResources(Rest.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(Ui.class).inNamespace(namespace).delete(kubernetesClient.customResources(Ui.class).inNamespace(namespace).list().getItems());
+        Resource<Secret> dockerhubSecret = kubernetesClient.secrets().inNamespace(namespace).withName(AbstractController.DOCKERHUB_IMAGE_PULLER_SECRET_NAME);
+        if (dockerhubSecret.get() != null) {
+            dockerhubSecret.delete();
+            log.infof("Deleted Secret '%s' in namespace '%s'", AbstractController.DOCKERHUB_IMAGE_PULLER_SECRET_NAME, namespace);
+        }
         return DeleteControl.DEFAULT_DELETE;
     }
 
     @Override
     public UpdateControl<Tackle> createOrUpdateResource(Tackle tackle, Context<Tackle> context) {
         String namespace = tackle.getMetadata().getNamespace();
+
+        final TackleSpec tackleSpec = tackle.getSpec();
+        if (tackleSpec != null) {
+            final String dockerhubConfigJson = tackleSpec.getDockerhubConfigJson();
+            if (!StringUtils.isEmpty(dockerhubConfigJson)) {
+                Secret dockerhubSecret = kubernetesClient.secrets().load(getClass().getResourceAsStream("templates/docker-hub-image-puller.yaml")).get();
+                dockerhubSecret.getMetadata().setNamespace(namespace);
+                Map<String, String> data = Collections.singletonMap(".dockerconfigjson", dockerhubConfigJson);
+                dockerhubSecret.setData(data);
+                kubernetesClient.secrets().inNamespace(namespace).createOrReplace(dockerhubSecret);
+            }
+            else log.warn("No 'spec.dockerhubConfigJson' has been provided: anonymous image pulling from Dockerhub could suffer for rate limits.");
+        }
+        else log.info("Tackle resource without spec: default configuration will be applied");
 
         // deploy all DB instances
         MixedOperation<PostgreSQL, KubernetesResourceList<PostgreSQL>, Resource<PostgreSQL>> postgreSQLClient = kubernetesClient.customResources(PostgreSQL.class);

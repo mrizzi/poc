@@ -102,7 +102,8 @@ public class KeycloakController extends AbstractController implements ResourceCo
                 .getContainers()
                 .get(0)
                 .setName(name);
-        
+        addDockerhubImagePullSecret(deployment, kubernetesClient.secrets().inNamespace(namespace));
+
         Service service = kubernetesClient.services().load(getClass().getResourceAsStream("templates/keycloak-service.yaml")).get();
         applyDefaultMetadata(service, name, namespace);
         service

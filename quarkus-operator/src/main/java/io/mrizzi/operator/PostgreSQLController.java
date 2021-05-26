@@ -103,6 +103,7 @@ public class PostgreSQLController extends AbstractController implements Resource
                 .getContainers()
                 .get(0)
                 .setName(name);
+        addDockerhubImagePullSecret(deployment, kubernetesClient.secrets().inNamespace(namespace));
         
         Service service = loadYaml(Service.class, "templates/postgresql-service.yaml");
         applyDefaultMetadata(service, name, namespace);
