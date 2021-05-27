@@ -1,0 +1,7 @@
+apiVersion: tackle.io/v1alpha1
+kind: ApplicationInventory
+metadata:
+  name: application-inventory
+spec:
+  restImage: quay.io/konveyor/tackle-application-inventory:0.0.1-SNAPSHOT-native
+  postgreSQLImage: postgres:10.6

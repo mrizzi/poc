@@ -27,6 +27,7 @@ public class TackleController implements ResourceController<Tackle> {
     @Override
     public DeleteControl deleteResource(Tackle tackle, Context<Tackle> context) {
         String namespace = tackle.getMetadata().getNamespace();
+        kubernetesClient.customResources(ApplicationInventory.class).inNamespace(namespace).delete(kubernetesClient.customResources(ApplicationInventory.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).delete(kubernetesClient.customResources(PostgreSQL.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).delete(kubernetesClient.customResources(Keycloak.class).inNamespace(namespace).list().getItems());
         kubernetesClient.customResources(Rest.class).inNamespace(namespace).delete(kubernetesClient.customResources(Rest.class).inNamespace(namespace).list().getItems());
@@ -68,9 +69,11 @@ public class TackleController implements ResourceController<Tackle> {
         postgreSQLControls.getMetadata().setNamespace(namespace);
         postgreSQLClient.inNamespace(namespace).createOrReplace(postgreSQLControls);
 
+/*
         PostgreSQL postgreSQLApplicationInventory = postgreSQLClient.load(TackleController.class.getResourceAsStream("postgresql/application-inventory-postgresql.yaml")).get();
         postgreSQLApplicationInventory.getMetadata().setNamespace(namespace);
         postgreSQLClient.inNamespace(namespace).createOrReplace(postgreSQLApplicationInventory);
+*/
 
         PostgreSQL postgreSQLPathfinder = postgreSQLClient.load(TackleController.class.getResourceAsStream("postgresql/pathfinder-postgresql.yaml")).get();
         postgreSQLPathfinder.getMetadata().setNamespace(namespace);
@@ -85,10 +88,17 @@ public class TackleController implements ResourceController<Tackle> {
         MixedOperation<Rest, KubernetesResourceList<Rest>, Resource<Rest>> restClient = kubernetesClient.customResources(Rest.class);
         Rest controls = restClient.load(TackleController.class.getResourceAsStream("rest/controls-rest.yaml")).get();
         restClient.inNamespace(namespace).createOrReplace(controls);
+/*
         Rest applicationInventory = restClient.load(TackleController.class.getResourceAsStream("rest/application-inventory-rest.yaml")).get();
         restClient.inNamespace(namespace).createOrReplace(applicationInventory);
+*/
         Rest pathfinder = restClient.load(TackleController.class.getResourceAsStream("rest/pathfinder-rest.yaml")).get();
         restClient.inNamespace(namespace).createOrReplace(pathfinder);
+
+        // alternative approach: deploy 'microservice's
+        MixedOperation<ApplicationInventory, KubernetesResourceList<ApplicationInventory>, Resource<ApplicationInventory>> applicationInventoryClient = kubernetesClient.customResources(ApplicationInventory.class);
+        ApplicationInventory applicationInventory = applicationInventoryClient.load(TackleController.class.getResourceAsStream("application-inventory/tackle-application-inventory.yaml")).get();
+        applicationInventoryClient.inNamespace(namespace).createOrReplace(applicationInventory);
 
         // deploy the UI instance
         MixedOperation<Ui, KubernetesResourceList<Ui>, Resource<Ui>> uiClient = kubernetesClient.customResources(Ui.class);
