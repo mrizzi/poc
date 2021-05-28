@@ -10,4 +10,4 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @Group("tackle.io")
 @Version("v1alpha1")
 // or Void for specs as well letting the specific component (REST, DB) to know the version?
-public class ApplicationInventory extends CustomResource<MicroserviceSpec, Void> implements Namespaced {}
+public class Microservice extends CustomResource<MicroserviceSpec, Void> implements Namespaced {}

@@ -1,0 +1,7 @@
+apiVersion: tackle.io/v1alpha1
+kind: Microservice
+metadata:
+  name: pathfinder
+spec:
+  rest: /io/mrizzi/operator/rest/pathfinder-rest.yaml
+  postgreSQL: /io/mrizzi/operator/postgresql/pathfinder-postgresql.yaml

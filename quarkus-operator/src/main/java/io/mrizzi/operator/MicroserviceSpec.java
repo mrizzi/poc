@@ -5,22 +5,22 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @RegisterForReflection
 public class MicroserviceSpec {
 
-    private String restImage;
-    private String postgreSQLImage;
+    private String rest;
+    private String postgreSQL;
 
-    public String getPostgreSQLImage() {
-        return postgreSQLImage;
+    public String getPostgreSQL() {
+        return postgreSQL;
     }
 
-    public void setPostgreSQLImage(String postgreSQLImage) {
-        this.postgreSQLImage = postgreSQLImage;
+    public void setPostgreSQL(String postgreSQL) {
+        this.postgreSQL = postgreSQL;
     }
 
-    public String getRestImage() {
-        return restImage;
+    public String getRest() {
+        return rest;
     }
 
-    public void setRestImage(String restImage) {
-        this.restImage = restImage;
+    public void setRest(String rest) {
+        this.rest = rest;
     }
 }
