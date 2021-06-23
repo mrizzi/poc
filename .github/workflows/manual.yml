@@ -20,5 +20,5 @@ jobs:
   upstream-build:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/${{ github.event.inputs.version }} https://github.com/${{ github.event.inputs.repositoryUser }}/community-operators ${{ github.event.inputs.repositoryBranch }}
+      - run: sudo su -c 'bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/${{ github.event.inputs.version }} https://github.com/${{ github.event.inputs.repositoryUser }}/community-operators ${{ github.event.inputs.repositoryBranch }}'
         name: Upstream build
