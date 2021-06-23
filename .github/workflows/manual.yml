@@ -1,9 +1,24 @@
+name: Operator test-suite execution
+
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Operator version'
+        required: true
+        default: '1.0.0'
+      repositoryUser:
+        description: 'Test scenario tags'
+        required: true
+        default: 'mrizzi'
+      repositoryBranch:
+        description: 'Test scenario tags'
+        required: true
+        default: 'tackle-upstream-1.0.0'
 
 jobs:
-  printInputs:
+  upstream-build:
     runs-on: ubuntu-latest
     steps:
-      - run: bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/0.0.1 https://github.com/mrizzi/community-operators tackle-upstream-0.0.1
+      - run: sudo bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/${{ github.event.inputs.version }} https://github.com/${{ github.event.inputs.repositoryUser }}/community-operators ${{ github.event.inputs.repositoryBranch }}
         name: Upstream build
