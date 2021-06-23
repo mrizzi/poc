@@ -1,0 +1,9 @@
+on:
+  workflow_dispatch
+
+jobs:
+  printInputs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/0.0.1 https://github.com/mrizzi/community-operators tackle-upstream-0.0.1
+        name: Upstream build
