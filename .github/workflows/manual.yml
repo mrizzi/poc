@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Operator version'
+        description: 'Tackle Operator version'
         required: true
         default: '1.0.0'
       repositoryUser:
