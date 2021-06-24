@@ -20,6 +20,6 @@ jobs:
   upstream-build:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo su -c 'bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/${{ github.event.inputs.version }} https://github.com/${{ github.event.inputs.repositoryUser }}/community-operators ${{ github.event.inputs.repositoryBranch }}'
+      - run: bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/${{ github.event.inputs.version }} https://github.com/${{ github.event.inputs.repositoryUser }}/community-operators ${{ github.event.inputs.repositoryBranch }}
         shell: 'script -q -e -c "bash {0}"'
         name: Upstream build
