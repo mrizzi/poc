@@ -15,11 +15,15 @@ on:
         description: 'Repository branch'
         required: true
         default: 'tackle-upstream-1.0.0'
+      communityOperatorsRepository:
+        description: 'Community Operators repository'
+        required: true
+        default: 'upstream-community-operators'
 
 jobs:
-  upstream-build:
+  community-operators-test-suite:
     runs-on: ubuntu-latest
     steps:
-      - run: bash <(curl -sL https://cutt.ly/WhkV76k) all upstream-community-operators/tackle-operator/${{ github.event.inputs.version }} https://github.com/${{ github.event.inputs.repositoryUser }}/community-operators ${{ github.event.inputs.repositoryBranch }}
+      - run: bash <(curl -sL https://cutt.ly/WhkV76k) all ${{ github.event.inputs.communityOperatorsRepository }}/tackle-operator/${{ github.event.inputs.version }} https://github.com/${{ github.event.inputs.repositoryUser }}/community-operators ${{ github.event.inputs.repositoryBranch }}
         shell: 'script -q -e -c "bash {0}"'
         name: Upstream build
