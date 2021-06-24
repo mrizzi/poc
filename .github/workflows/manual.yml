@@ -8,11 +8,11 @@ on:
         required: true
         default: '1.0.0'
       repositoryUser:
-        description: 'Test scenario tags'
+        description: 'Repository username'
         required: true
         default: 'mrizzi'
       repositoryBranch:
-        description: 'Test scenario tags'
+        description: 'Repository branch'
         required: true
         default: 'tackle-upstream-1.0.0'
 
