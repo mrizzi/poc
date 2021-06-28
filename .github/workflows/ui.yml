@@ -22,6 +22,6 @@ jobs:
       - name: Yarn Build
         run: yarn build
       - name: Container build
-        run: podman build --pull-always --label git.tag=$(git describe --tags --exact-match) --label git.commit=$(git rev-parse HEAD) -t quay.io/mrizzi/tackle-ui:$(git describe --tags --exact-match) .
+        run: podman build --pull-always --label git.tag=$(git describe --tags --exact-match) --label git.commit=$(git rev-parse HEAD) -t quay.io/${{ github.repository_owner }}/tackle-ui:$(git describe --tags --exact-match) .
       - name: Container push
-        run: podman push quay.io/mrizzi/tackle-ui:$(git describe --tags --exact-match) --creds ${{ secrets.QUAY_ROBOT_USERNAME }}:${{ secrets.QUAY_ROBOT_TOKEN }}
+        run: podman push quay.io/${{ github.repository_owner }}/tackle-ui:$(git describe --tags --exact-match) --creds ${{ secrets.QUAY_ROBOT_USERNAME }}:${{ secrets.QUAY_ROBOT_TOKEN }}
