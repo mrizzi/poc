@@ -47,6 +47,16 @@
       <artifactId>quarkus-arc</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jboss.windup.web.addons</groupId>
+      <artifactId>windup-web-support</artifactId>
+      <version>5.2.0.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.windup.graph</groupId>
+      <artifactId>windup-graph</artifactId>
+      <version>5.2.0.Final</version>
+    </dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
       <scope>test</scope>
