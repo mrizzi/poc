@@ -7,9 +7,7 @@
     <artifactId>poc-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>io.mrizzi</groupId>
   <artifactId>rest-graph</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -21,6 +19,7 @@
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>2.2.1.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <janusgraph.version>0.6.0</janusgraph.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -47,14 +46,20 @@
       <artifactId>quarkus-arc</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.windup.web.addons</groupId>
-      <artifactId>windup-web-support</artifactId>
-      <version>5.2.0.Final</version>
+      <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-core</artifactId>
+      <version>${janusgraph.version}</version>
+      <exclusions>
+          <exclusion>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+          </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.jboss.windup.graph</groupId>
-      <artifactId>windup-graph</artifactId>
-      <version>5.2.0.Final</version>
+      <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-inmemory</artifactId>
+      <version>${janusgraph.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -99,6 +104,7 @@
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
+          <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
     </plugins>

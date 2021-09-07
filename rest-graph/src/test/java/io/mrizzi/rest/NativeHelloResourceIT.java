@@ -3,7 +3,7 @@ package io.mrizzi.rest;
 import io.quarkus.test.junit.NativeImageTest;
 
 @NativeImageTest
-public class NativeAnalysisResourceIT extends AnalysisResourceTest {
+public class NativeHelloResourceIT extends HelloResourceTest {
 
     // Execute the same tests but in native mode.
 }
