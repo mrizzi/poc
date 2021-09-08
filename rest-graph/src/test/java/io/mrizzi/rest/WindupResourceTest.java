@@ -18,6 +18,8 @@ public class WindupResourceTest {
           .then()
              .statusCode(200)
                 .log().body()
-             .body(is("Hello Windup"));
+             .body("issue_categories_size", is(6),
+                     "total_vertex_count", is(10924),
+                     "issues_category_description", is("Information"));
     }
 }

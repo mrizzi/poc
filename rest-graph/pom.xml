@@ -20,7 +20,28 @@
     <quarkus.platform.version>2.2.1.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <janusgraph.version>0.6.0</janusgraph.version>
+    <windup.version>5.2.0.Final</windup.version>
+    <tinkerpop.version>3.5.1</tinkerpop.version>
   </properties>
+  <repositories>
+    <repository>
+        <!--
+            In windup-graph-impl artifact, the janusgraph-berkeleyje dependency defines the 'oracleReleases' repository in order to retrieve
+            artifact com.sleepycat:je:7.4.5 from Oracle Maven repo (http://download.oracle.com/maven/com/sleepycat/je/7.4.5/je-7.4.5.pom)
+            BUT Maven 3.8.1 "Block external HTTP repositories by default" (https://issues.apache.org/jira/browse/MNG-7118) so
+            here the HTTP*S* version of Oracle Maven repo is defined.
+        -->
+      <id>oracleReleases-mirror</id>
+        <name>oracleReleases-mirror</name>
+        <url>https://download.oracle.com/maven/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+  </repositories>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -70,6 +91,48 @@
       <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-lucene</artifactId>
       <version>${janusgraph.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.windup.reporting</groupId>
+      <artifactId>windup-reporting-api</artifactId>
+      <version>${windup.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.windup.graph</groupId>
+        <artifactId>windup-graph</artifactId>
+        <version>${windup.version}</version>
+        <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.9.4</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.tinkerpop</groupId>
+        <artifactId>gremlin-core</artifactId>
+        <version>${tinkerpop.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.syncleus.ferma</groupId>
+      <artifactId>ferma</artifactId>
+      <version>3.3.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.windup.graph</groupId>
+        <artifactId>windup-graph-impl</artifactId>
+        <version>${windup.version}</version>
+        <exclusions>
+            <exclusion>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.windup.utils</groupId>
+        <artifactId>windup-utils</artifactId>
+        <version>${windup.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
