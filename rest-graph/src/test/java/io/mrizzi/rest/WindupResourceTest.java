@@ -4,7 +4,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.iterableWithSize;
 
 @QuarkusTest
 public class WindupResourceTest {
@@ -18,8 +19,8 @@ public class WindupResourceTest {
           .then()
              .statusCode(200)
                 .log().body()
-             .body("issue_categories_size", is(6),
-                     "total_vertex_count", is(10924),
-                     "issues_category_description", is("Information"));
+             .body("", iterableWithSize(6),
+                     "name", containsInAnyOrder("Information", "Migration Optional", "Cloud Mandatory", "Migration Mandatory", "Cloud Optional", "Migration Potential"),
+                     "categoryID", containsInAnyOrder("information", "optional", "cloud-mandatory", "mandatory", "cloud-optional", "potential"));
     }
 }
