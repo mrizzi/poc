@@ -6,6 +6,7 @@ import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import com.syncleus.ferma.typeresolvers.PolymorphicTypeResolver;
 import io.mrizzi.graph.AnnotationFrameFactory;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -26,6 +27,7 @@ import org.jboss.windup.graph.javahandler.JavaHandlerHandler;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.web.addons.websupport.rest.graph.GraphResource;
 
 import javax.ws.rs.GET;
@@ -85,13 +87,47 @@ public class WindupResource {
         return Response.serverError().build();
     }
 
-    /**
-     * Heavily inspired from https://github.com/windup/windup-web/blob/8f81bc56d34756ff3a9261edfccbe9b44af40fc2/addons/web-support/impl/src/main/java/org/jboss/windup/web/addons/websupport/rest/graph/AbstractGraphResource.java#L203
-     * @param executionID
-     * @param frames
-     * @param depth
-     * @return
-     */
+    @GET
+    @Path("/issue")
+    public Response issues() {
+        final ReflectionCache reflections = new ReflectionCache();
+        final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
+        try (JanusGraph janusGraph = openJanusGraph();
+            FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections))) {
+            List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
+            LOG.infof("Found %d issues", issues.size());
+            return Response.ok(frameIterableToResult(1L, issues, 1)).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.serverError().build();
+    }
+
+    private Set<MethodHandler> getMethodHandlers() {
+        final Set<MethodHandler> handlers = new HashSet<>();
+        handlers.add(new MapInPropertiesHandler());
+        handlers.add(new MapInAdjacentPropertiesHandler());
+        handlers.add(new MapInAdjacentVerticesHandler());
+        handlers.add(new SetInPropertiesHandler());
+        handlers.add(new JavaHandlerHandler());
+        handlers.add(new WindupPropertyMethodHandler());
+        handlers.add(new WindupAdjacencyMethodHandler());
+        return handlers;
+    }
+
+    private JanusGraph openJanusGraph() throws URISyntaxException, ConfigurationException {
+        final URL url = getClass().getResource("/graph/TitanConfiguration.properties");
+        final File properties = new File(url.toURI());
+        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(properties));
+    }
+
+        /**
+         * Heavily inspired from https://github.com/windup/windup-web/blob/8f81bc56d34756ff3a9261edfccbe9b44af40fc2/addons/web-support/impl/src/main/java/org/jboss/windup/web/addons/websupport/rest/graph/AbstractGraphResource.java#L203
+         * @param executionID
+         * @param frames
+         * @param depth
+         * @return
+         */
     protected List<Map<String, Object>> frameIterableToResult(long executionID, Iterable<? extends WindupVertexFrame> frames, int depth)
     {
 //        GraphMarshallingContext ctx = new GraphMarshallingContext(executionID, null, depth, false, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true);

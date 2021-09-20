@@ -23,4 +23,13 @@ public class WindupResourceTest {
                      "name", containsInAnyOrder("Information", "Migration Optional", "Cloud Mandatory", "Migration Mandatory", "Cloud Optional", "Migration Potential"),
                      "categoryID", containsInAnyOrder("information", "optional", "cloud-mandatory", "mandatory", "cloud-optional", "potential"));
     }
+
+    @Test
+    public void testWindupGetIssueEndpoint() {
+        given()
+          .when().get(String.format("%s/issue", PATH))
+          .then()
+             .statusCode(200)
+             .body("", iterableWithSize(35));
+    }
 }
