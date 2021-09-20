@@ -10,12 +10,12 @@ import static org.hamcrest.Matchers.iterableWithSize;
 @QuarkusTest
 public class WindupResourceTest {
 
-    private static final String PATH = "/hello";
+    private static final String PATH = "/windup";
 
     @Test
-    public void testWindupGetEndpoint() {
+    public void testWindupGetIssueCategoryEndpoint() {
         given()
-          .when().get("/windup")
+          .when().get(String.format("%s/issueCategory", PATH))
           .then()
              .statusCode(200)
                 .log().body()

@@ -50,7 +50,8 @@ public class WindupResource {
     private static final Logger LOG = Logger.getLogger(WindupResource.class);
 
     @GET
-    public Response issues() throws URISyntaxException {
+    @Path("/issueCategory")
+    public Response issuesCategories() throws URISyntaxException {
         final URL url = getClass().getResource("/graph/TitanConfiguration.properties");
         final File properties = new File(url.toURI());
         final Set<MethodHandler> handlers = new HashSet<>();
