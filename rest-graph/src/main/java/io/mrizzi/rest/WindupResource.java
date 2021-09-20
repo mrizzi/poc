@@ -53,27 +53,17 @@ public class WindupResource {
 
     @GET
     @Path("/issueCategory")
-    public Response issuesCategories() throws URISyntaxException {
-        final URL url = getClass().getResource("/graph/TitanConfiguration.properties");
-        final File properties = new File(url.toURI());
-        final Set<MethodHandler> handlers = new HashSet<>();
-        handlers.add(new MapInPropertiesHandler());
-        handlers.add(new MapInAdjacentPropertiesHandler());
-        handlers.add(new MapInAdjacentVerticesHandler());
-        handlers.add(new SetInPropertiesHandler());
-        handlers.add(new JavaHandlerHandler());
-        handlers.add(new WindupPropertyMethodHandler());
-        handlers.add(new WindupAdjacencyMethodHandler());
+    public Response issuesCategories() {
         final ReflectionCache reflections = new ReflectionCache();
-        final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, handlers);
-        final GraphTypeManager graphTypeManager = new GraphTypeManager();
+        final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
         final Map<String, Object> results = new HashMap<>();
         try (
-             JanusGraph janusGraph = JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(properties));
+             JanusGraph janusGraph = openJanusGraph();
              GraphTraversalSource g = janusGraph.traversal();
              FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections))) {
             results.put("total_vertex_count", g.V().count().next());
 //            List<Vertex> issueCategoriesVertex = g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(IssueCategoryModel.class)).toList();
+            final GraphTypeManager graphTypeManager = new GraphTypeManager();
             List<Vertex> issueCategoriesVertex = graphTypeManager.hasType(g.V(), IssueCategoryModel.class).toList();
             results.put("issue_categories_size", issueCategoriesVertex.size());
             Iterable<Vertex> vertices = (Iterable<Vertex>) framedGraph.traverse((graphTraversalSource) -> graphTraversalSource.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(IssueCategoryModel.class))).getRawTraversal().toList();
