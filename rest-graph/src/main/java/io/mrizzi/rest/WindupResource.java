@@ -12,6 +12,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.util.system.ConfigurationUtil;
@@ -50,6 +51,10 @@ import java.util.Set;
 @Produces(MediaType.APPLICATION_JSON)
 public class WindupResource {
     private static final Logger LOG = Logger.getLogger(WindupResource.class);
+    private static final String DEFAULT_GRAPH_CONFIGURATION_FILE_NAME = "graphConfiguration.properties";
+
+    @ConfigProperty(defaultValue = DEFAULT_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.properties.file.path")
+    String graphPropertiesPath;
 
     @GET
     @Path("/issueCategory")
@@ -106,7 +111,7 @@ public class WindupResource {
     }
 
     private JanusGraph openJanusGraph() throws URISyntaxException, ConfigurationException {
-        final URL url = getClass().getResource("/graph/TitanConfiguration.properties");
+        final URL url = getClass().getResource(graphPropertiesPath);
         final File properties = new File(url.toURI());
         return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(properties));
     }
