@@ -37,8 +37,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +52,7 @@ public class WindupResource {
     private static final String DEFAULT_GRAPH_CONFIGURATION_FILE_NAME = "graphConfiguration.properties";
 
     @ConfigProperty(defaultValue = DEFAULT_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.properties.file.path")
-    String graphPropertiesPath;
+    File graphProperties;
 
     @GET
     @Path("/issueCategory")
@@ -110,10 +108,9 @@ public class WindupResource {
         return handlers;
     }
 
-    private JanusGraph openJanusGraph() throws URISyntaxException, ConfigurationException {
-        final URL url = getClass().getResource(graphPropertiesPath);
-        final File properties = new File(url.toURI());
-        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(properties));
+    private JanusGraph openJanusGraph() throws ConfigurationException {
+        LOG.debugf("Opening Janus Graph properties file %s", graphProperties);
+        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(graphProperties));
     }
 
         /**
