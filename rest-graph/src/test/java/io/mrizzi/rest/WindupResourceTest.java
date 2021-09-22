@@ -32,4 +32,13 @@ public class WindupResourceTest {
              .statusCode(200)
              .body("", iterableWithSize(35));
     }
+
+    @Test
+    public void testWindupGetTmpEndpoint() {
+        given()
+          .when().put(String.format("%s/application/%d/analysis/", PATH, 0L))
+          .then()
+             .statusCode(202)
+                .log().all();
+    }
 }
