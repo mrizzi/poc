@@ -32,7 +32,9 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.web.addons.websupport.rest.graph.GraphResource;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -50,9 +52,14 @@ import java.util.Set;
 public class WindupResource {
     private static final Logger LOG = Logger.getLogger(WindupResource.class);
     private static final String DEFAULT_GRAPH_CONFIGURATION_FILE_NAME = "graphConfiguration.properties";
+    private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "centralGraphConfiguration.properties";
+    private static final String PATH_PARAM_APPLICATION_ID = "applicationId";
 
     @ConfigProperty(defaultValue = DEFAULT_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.properties.file.path")
     File graphProperties;
+
+    @ConfigProperty(defaultValue = DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.central.properties.file.path")
+    File centralGraphProperties;
 
     @GET
     @Path("/issueCategory")
@@ -96,6 +103,38 @@ public class WindupResource {
         return Response.serverError().build();
     }
 
+    @PUT
+    @Path("/application/{"+ PATH_PARAM_APPLICATION_ID + "}/analysis/")
+    public Response updateGraph(@PathParam(PATH_PARAM_APPLICATION_ID) String applicationId) {
+        final ReflectionCache reflections = new ReflectionCache();
+        final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
+        try (JanusGraph janusGraph = openJanusGraph();
+            FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
+            JanusGraph centralJanusGraph = openCentralJanusGraph()) {
+            LOG.warnf("Central Graph count before %d", centralJanusGraph.traversal().V().count().next());
+/*
+            GraphTraversal<Vertex, Vertex> traversal = janusGraph.traversal().V();
+            while (traversal.hasNext()) {
+                Object vertex = traversal.next();
+                LOG.warnf("Adding Vertex %d with winduptype '%s'", vertex.id(), vertex.properties(WindupFrame.TYPE_PROP));
+                centralJanusGraph.addVertex(vertex);
+            }
+*/
+            Iterator<WindupVertexFrame> iter = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP)).frame(WindupVertexFrame.class);
+            while (iter.hasNext()) {
+                WindupVertexFrame vertex = iter.next();
+                LOG.warnf("Adding Vertex %d with winduptype '%s'", vertex.getElement().id(), vertex.getClass());
+                centralJanusGraph.addVertex(vertex);
+            }
+            LOG.warn("AFTER");
+            centralJanusGraph.traversal().V().toList().forEach(LOG::info);
+            return Response.accepted().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.serverError().build();
+    }
+
     private Set<MethodHandler> getMethodHandlers() {
         final Set<MethodHandler> handlers = new HashSet<>();
         handlers.add(new MapInPropertiesHandler());
@@ -111,6 +150,11 @@ public class WindupResource {
     private JanusGraph openJanusGraph() throws ConfigurationException {
         LOG.debugf("Opening Janus Graph properties file %s", graphProperties);
         return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(graphProperties));
+    }
+
+    private JanusGraph openCentralJanusGraph() throws ConfigurationException {
+        LOG.debugf("Opening Central Janus Graph properties file %s", centralGraphProperties);
+        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
     }
 
         /**
