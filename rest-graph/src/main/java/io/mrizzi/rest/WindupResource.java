@@ -6,10 +6,15 @@ import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import com.syncleus.ferma.typeresolvers.PolymorphicTypeResolver;
 import io.mrizzi.graph.AnnotationFrameFactory;
+import io.mrizzi.graph.GraphService;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.tinkerpop.gremlin.process.traversal.TraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -31,6 +36,7 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.web.addons.websupport.rest.graph.GraphResource;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -60,6 +66,9 @@ public class WindupResource {
 
     @ConfigProperty(defaultValue = DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.central.properties.file.path")
     File centralGraphProperties;
+
+    @Inject
+    GraphService graphService;
 
     @GET
     @Path("/issueCategory")
@@ -108,10 +117,20 @@ public class WindupResource {
     public Response updateGraph(@PathParam(PATH_PARAM_APPLICATION_ID) String applicationId) {
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
-        try (JanusGraph janusGraph = openJanusGraph();
-            FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
-            JanusGraph centralJanusGraph = openCentralJanusGraph()) {
-            LOG.warnf("Central Graph count before %d", centralJanusGraph.traversal().V().count().next());
+        try /*(JanusGraph janusGraph = openJanusGraph();
+             FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
+             JanusGraph centralJanusGraph = openCentralJanusGraph();
+             FramedGraph framedCentralJanusGraph = new DelegatingFramedGraph<>(centralJanusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
+             Transaction transaction = centralJanusGraph.tx();
+             Graph graph = transaction.createThreadedTx())*/ {
+            JanusGraph centralJanusGraph = graphService.getCentralJanusGraph();
+            Transaction transaction = centralJanusGraph.tx();
+            TraversalSource traversalSource = transaction.begin();
+            final Graph.Features.GraphFeatures graphFeatures = centralJanusGraph.features().graph();
+            LOG.infof("supportsThreadedTransactions : %b", graphFeatures.supportsThreadedTransactions());
+            LOG.infof("supportsTransactions : %b", graphFeatures.supportsTransactions());
+            GraphTraversal<Vertex, Vertex> traversal = centralJanusGraph.traversal().V();
+            LOG.warnf("Central Graph count before %d", traversal.count().next());
 /*
             GraphTraversal<Vertex, Vertex> traversal = janusGraph.traversal().V();
             while (traversal.hasNext()) {
@@ -120,16 +139,23 @@ public class WindupResource {
                 centralJanusGraph.addVertex(vertex);
             }
 */
+/*
             Iterator<WindupVertexFrame> iter = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP)).frame(WindupVertexFrame.class);
             while (iter.hasNext()) {
                 WindupVertexFrame vertex = iter.next();
                 LOG.warnf("Adding Vertex %d with winduptype '%s'", vertex.getElement().id(), vertex.getClass());
-                centralJanusGraph.addVertex(vertex);
+                Vertex importedVertex = centralJanusGraph.addVertex();
+                vertex.getElement().keys().forEach(property -> importedVertex.property(property, vertex.getProperty(property)));
             }
+*/
+            Vertex vertex = centralJanusGraph.addVertex();
+            LOG.infof("Created vertex (ID %d)", vertex.id());
+            vertex.property(PATH_PARAM_APPLICATION_ID, applicationId);
             LOG.warn("AFTER");
-            centralJanusGraph.traversal().V().toList().forEach(LOG::info);
+            centralJanusGraph.traversal().V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
             return Response.accepted().build();
         } catch (Exception e) {
+            LOG.errorf("Exception occurred: %s", e.getMessage());
             e.printStackTrace();
         }
         return Response.serverError().build();
