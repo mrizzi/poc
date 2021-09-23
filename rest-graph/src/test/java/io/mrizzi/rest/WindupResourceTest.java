@@ -40,5 +40,10 @@ public class WindupResourceTest {
           .then()
              .statusCode(202)
                 .log().all();
+        given()
+          .when().put(String.format("%s/application/%d/analysis/", PATH, 1L))
+          .then()
+             .statusCode(202)
+                .log().all();
     }
 }
