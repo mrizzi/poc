@@ -34,7 +34,7 @@ public class WindupResourceTest {
     }
 
     @Test
-    public void testWindupGetTmpEndpoint() {
+    public void testWindupPutAnalysisEndpoint() {
         given()
           .when().put(String.format("%s/application/%d/analysis/", PATH, 0L))
           .then()
