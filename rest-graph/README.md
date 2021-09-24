@@ -27,7 +27,8 @@ If you want to build an _über-jar_, execute the following command:
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.  
+The application is now runnable using `java Dquarkus.log.level=DEBUG -Dio.mrizzi.graph.properties.file.path=/home/mrizzi/git/cloned/poc/rest-graph/src/test/resources/graph/TitanConfiguration.properties -jar target/quarkus-app/quarkus-run.jar`.
 
 ## Creating a native executable
 
