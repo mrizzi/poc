@@ -173,6 +173,12 @@ public class WindupResource {
         return Response.serverError().build();
     }
 
+    @GET
+    @Path("/tmp")
+    public Response tmp() {
+        return updateGraph(Long.toString(System.currentTimeMillis()));
+    }
+
     private Set<MethodHandler> getMethodHandlers() {
         final Set<MethodHandler> handlers = new HashSet<>();
         handlers.add(new MapInPropertiesHandler());
