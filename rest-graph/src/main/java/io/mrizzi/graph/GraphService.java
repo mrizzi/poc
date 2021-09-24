@@ -43,8 +43,10 @@ public class GraphService {
         LOG.infof("Opening Central Janus Graph properties file %s", centralGraphProperties);
         final JanusGraph janusGraph = JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
         final JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
-        final PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(WindupVertexFrame.TYPE_PROP).dataType(String.class).cardinality(Cardinality.LIST).make();
-        // TODO create the index for typePropPropertyKey
+        if (!janusGraphManagement.containsPropertyKey(WindupVertexFrame.TYPE_PROP)) {
+            final PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(WindupVertexFrame.TYPE_PROP).dataType(String.class).cardinality(Cardinality.LIST).make();
+            // TODO create the index for typePropPropertyKey
+        }
         janusGraphManagement.commit();
         return janusGraph;
     }
