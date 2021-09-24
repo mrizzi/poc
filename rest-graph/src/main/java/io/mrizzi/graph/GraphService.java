@@ -36,6 +36,7 @@ public class GraphService {
 
     @PreDestroy
     void destroy() {
+        LOG.infof("Closing Central Janus Graph properties file %s", centralGraphProperties);
         janusGraph.close();
     }
 
