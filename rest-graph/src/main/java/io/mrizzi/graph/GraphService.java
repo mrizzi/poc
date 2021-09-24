@@ -40,7 +40,7 @@ public class GraphService {
     }
 
     private JanusGraph openCentralJanusGraph() throws ConfigurationException {
-        LOG.debugf("Opening Central Janus Graph properties file %s", centralGraphProperties);
+        LOG.infof("Opening Central Janus Graph properties file %s", centralGraphProperties);
         final JanusGraph janusGraph = JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
         final JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
         final PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(WindupVertexFrame.TYPE_PROP).dataType(String.class).cardinality(Cardinality.LIST).make();
