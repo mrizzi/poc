@@ -134,7 +134,7 @@ public class WindupResource {
             LOG.infof("supportsTransactions : %b", graphFeatures.supportsTransactions());
             LOG.infof("supportsMixedListValues : %b", vertexPropertyFeatures.supportsMixedListValues());
             GraphTraversal<Vertex, Vertex> traversal = centralJanusGraph.traversal().V();
-            LOG.warnf("Central Graph count before %d", traversal.count().next());
+            LOG.infof("Central Graph count before %d", traversal.count().next());
 /*
             GraphTraversal<Vertex, Vertex> traversal = janusGraph.traversal().V();
             while (traversal.hasNext()) {
@@ -163,7 +163,7 @@ public class WindupResource {
 //                    importedVertex.setProperty(property, vertex.getProperty(/*).getElement().properties(*/property));
                 });
             }
-            LOG.warnf("Central Graph count after %d", centralJanusGraph.traversal().V().count().next());
+            LOG.infof("Central Graph count after %d", centralJanusGraph.traversal().V().count().next());
 //            centralJanusGraph.traversal().V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
             return Response.accepted().build();
         } catch (Exception e) {
