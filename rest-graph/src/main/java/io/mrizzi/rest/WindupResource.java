@@ -127,8 +127,6 @@ public class WindupResource {
              Graph graph = transaction.createThreadedTx()*/) {
             JanusGraph centralJanusGraph = graphService.getCentralJanusGraph();
             FramedGraph framedCentralJanusGraph = new DelegatingFramedGraph<>(centralJanusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
-            Transaction transaction = centralJanusGraph.tx();
-            TraversalSource traversalSource = transaction.begin();
             final Graph.Features features = centralJanusGraph.features();
             final Graph.Features.GraphFeatures graphFeatures = features.graph();
             Graph.Features.VertexPropertyFeatures vertexPropertyFeatures = features.vertex().properties();
