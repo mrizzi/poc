@@ -4,10 +4,14 @@ import io.mrizzi.rest.WindupResource;
 import io.quarkus.runtime.Startup;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.janusgraph.core.Cardinality;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.PropertyKey;
+import org.janusgraph.core.schema.JanusGraphManagement;
 import org.janusgraph.util.system.ConfigurationUtil;
 import org.jboss.logging.Logger;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -37,7 +41,12 @@ public class GraphService {
 
     private JanusGraph openCentralJanusGraph() throws ConfigurationException {
         LOG.debugf("Opening Central Janus Graph properties file %s", centralGraphProperties);
-        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
+        final JanusGraph janusGraph = JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
+        final JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
+        final PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(WindupVertexFrame.TYPE_PROP).dataType(String.class).cardinality(Cardinality.LIST).make();
+        // TODO create the index for typePropPropertyKey
+        janusGraphManagement.commit();
+        return janusGraph;
     }
     
     public JanusGraph getCentralJanusGraph() {

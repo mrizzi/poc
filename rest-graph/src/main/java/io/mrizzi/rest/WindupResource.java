@@ -14,6 +14,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
@@ -46,6 +47,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -117,18 +119,22 @@ public class WindupResource {
     public Response updateGraph(@PathParam(PATH_PARAM_APPLICATION_ID) String applicationId) {
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
-        try /*(JanusGraph janusGraph = openJanusGraph();
+        try (JanusGraph janusGraph = openJanusGraph();
              FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
-             JanusGraph centralJanusGraph = openCentralJanusGraph();
+             /*JanusGraph centralJanusGraph = openCentralJanusGraph();
              FramedGraph framedCentralJanusGraph = new DelegatingFramedGraph<>(centralJanusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
              Transaction transaction = centralJanusGraph.tx();
-             Graph graph = transaction.createThreadedTx())*/ {
+             Graph graph = transaction.createThreadedTx()*/) {
             JanusGraph centralJanusGraph = graphService.getCentralJanusGraph();
+            FramedGraph framedCentralJanusGraph = new DelegatingFramedGraph<>(centralJanusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
             Transaction transaction = centralJanusGraph.tx();
             TraversalSource traversalSource = transaction.begin();
-            final Graph.Features.GraphFeatures graphFeatures = centralJanusGraph.features().graph();
+            final Graph.Features features = centralJanusGraph.features();
+            final Graph.Features.GraphFeatures graphFeatures = features.graph();
+            Graph.Features.VertexPropertyFeatures vertexPropertyFeatures = features.vertex().properties();
             LOG.infof("supportsThreadedTransactions : %b", graphFeatures.supportsThreadedTransactions());
             LOG.infof("supportsTransactions : %b", graphFeatures.supportsTransactions());
+            LOG.infof("supportsMixedListValues : %b", vertexPropertyFeatures.supportsMixedListValues());
             GraphTraversal<Vertex, Vertex> traversal = centralJanusGraph.traversal().V();
             LOG.warnf("Central Graph count before %d", traversal.count().next());
 /*
@@ -139,20 +145,28 @@ public class WindupResource {
                 centralJanusGraph.addVertex(vertex);
             }
 */
-/*
             Iterator<WindupVertexFrame> iter = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP)).frame(WindupVertexFrame.class);
             while (iter.hasNext()) {
                 WindupVertexFrame vertex = iter.next();
-                LOG.warnf("Adding Vertex %d with winduptype '%s'", vertex.getElement().id(), vertex.getClass());
+                LOG.debugf("Adding Vertex %s", vertex);
                 Vertex importedVertex = centralJanusGraph.addVertex();
-                vertex.getElement().keys().forEach(property -> importedVertex.property(property, vertex.getProperty(property)));
+//                WindupVertexFrame importedVertex = framedCentralJanusGraph.addFramedVertex(WindupVertexFrame.class);
+                Iterator<VertexProperty<String>> types = vertex.getElement().properties(WindupFrame.TYPE_PROP);
+                List<String> importedTypes = new ArrayList<>();
+                types.forEachRemaining(type -> {if (type.isPresent()) importedTypes.add(type.value());});
+                importedVertex.property(WindupFrame.TYPE_PROP, importedTypes);
+//                importedVertex.setProperty(WindupFrame.TYPE_PROP, importedTypes);
+                vertex.getElement().keys()
+                        .stream()
+                        .filter(s -> !WindupFrame.TYPE_PROP.equals(s))
+                        .forEach(property -> {
+                    LOG.debugf("Vertex %d has property %s with values %s", vertex.getElement().id(), property, vertex.getProperty(/*).getElement().properties(*/property));
+                    importedVertex.property(property, vertex.getProperty(/*).getElement().properties(*/property));
+//                    importedVertex.setProperty(property, vertex.getProperty(/*).getElement().properties(*/property));
+                });
             }
-*/
-            Vertex vertex = centralJanusGraph.addVertex();
-            LOG.infof("Created vertex (ID %d)", vertex.id());
-            vertex.property(PATH_PARAM_APPLICATION_ID, applicationId);
-            LOG.warn("AFTER");
-            centralJanusGraph.traversal().V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
+            LOG.warnf("Central Graph count after %d", centralJanusGraph.traversal().V().count().next());
+//            centralJanusGraph.traversal().V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
             return Response.accepted().build();
         } catch (Exception e) {
             LOG.errorf("Exception occurred: %s", e.getMessage());
