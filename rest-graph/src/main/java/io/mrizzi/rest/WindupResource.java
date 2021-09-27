@@ -8,14 +8,11 @@ import com.syncleus.ferma.typeresolvers.PolymorphicTypeResolver;
 import io.mrizzi.graph.AnnotationFrameFactory;
 import io.mrizzi.graph.GraphService;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.tinkerpop.gremlin.process.traversal.TraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.apache.tinkerpop.gremlin.structure.Property;
-import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -47,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -119,6 +115,7 @@ public class WindupResource {
     public Response updateGraph(@PathParam(PATH_PARAM_APPLICATION_ID) String applicationId) {
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
+        final Map<Object, Object> verticesBeforeAndAfter = new HashMap<>();
         try (JanusGraph janusGraph = openJanusGraph();
              FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
              /*JanusGraph centralJanusGraph = openCentralJanusGraph();
@@ -143,11 +140,12 @@ public class WindupResource {
                 centralJanusGraph.addVertex(vertex);
             }
 */
-            Iterator<WindupVertexFrame> iter = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP)).frame(WindupVertexFrame.class);
-            while (iter.hasNext()) {
-                WindupVertexFrame vertex = iter.next();
+            final Iterator<WindupVertexFrame> vertexIterator = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP)).frame(WindupVertexFrame.class);
+            while (vertexIterator.hasNext()) {
+                WindupVertexFrame vertex = vertexIterator.next();
                 LOG.debugf("Adding Vertex %s", vertex);
                 Vertex importedVertex = centralJanusGraph.addVertex();
+                verticesBeforeAndAfter.put(vertex.getElement().id(), importedVertex.id());
 //                WindupVertexFrame importedVertex = framedCentralJanusGraph.addFramedVertex(WindupVertexFrame.class);
                 Iterator<VertexProperty<String>> types = vertex.getElement().properties(WindupFrame.TYPE_PROP);
                 List<String> importedTypes = new ArrayList<>();
