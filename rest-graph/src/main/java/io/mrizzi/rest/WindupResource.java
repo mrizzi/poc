@@ -1,6 +1,7 @@
 package io.mrizzi.rest;
 
 import com.syncleus.ferma.DelegatingFramedGraph;
+import com.syncleus.ferma.EdgeFrame;
 import com.syncleus.ferma.FramedGraph;
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
@@ -8,6 +9,7 @@ import com.syncleus.ferma.typeresolvers.PolymorphicTypeResolver;
 import io.mrizzi.graph.AnnotationFrameFactory;
 import io.mrizzi.graph.GraphService;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -19,6 +21,7 @@ import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.attribute.Text;
 import org.janusgraph.util.system.ConfigurationUtil;
 import org.jboss.logging.Logger;
 import org.jboss.windup.graph.GraphTypeManager;
@@ -29,11 +32,13 @@ import org.jboss.windup.graph.SetInPropertiesHandler;
 import org.jboss.windup.graph.WindupAdjacencyMethodHandler;
 import org.jboss.windup.graph.WindupPropertyMethodHandler;
 import org.jboss.windup.graph.javahandler.JavaHandlerHandler;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupEdgeFrame;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.rule.RuleExecutionModel;
 import org.jboss.windup.web.addons.websupport.rest.graph.GraphResource;
 
 import javax.inject.Inject;
@@ -46,12 +51,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Path("/windup")
 @Produces(MediaType.APPLICATION_JSON)
@@ -101,7 +111,7 @@ public class WindupResource {
     public Response issues() {
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
-        try (JanusGraph janusGraph = openJanusGraph();
+        try (JanusGraph janusGraph = graphService.getCentralJanusGraph();
             FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections))) {
             LOG.warnf("...running the query...");
             List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
