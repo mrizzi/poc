@@ -1,7 +1,6 @@
 package io.mrizzi.rest;
 
 import com.syncleus.ferma.DelegatingFramedGraph;
-import com.syncleus.ferma.EdgeFrame;
 import com.syncleus.ferma.FramedGraph;
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
@@ -14,6 +13,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -103,8 +103,15 @@ public class WindupResource {
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
         try (JanusGraph janusGraph = openJanusGraph();
             FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections))) {
+            LOG.warnf("...running the query...");
             List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
             LOG.infof("Found %d issues", issues.size());
+            // TODO debug log loop to be removed
+            issues.forEach(windupVertexFrame -> {
+                List<Object> actualList = new ArrayList<>();
+                windupVertexFrame.getElement().properties(WindupFrame.TYPE_PROP).forEachRemaining(type -> type.ifPresent(actualList::add));
+                LOG.debugf("Vertex winduptype properties %s", actualList);
+            });
             return Response.ok(frameIterableToResult(1L, issues, 1)).build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,10 +157,7 @@ public class WindupResource {
                 verticesBeforeAndAfter.put(vertex.getElement().id(), importedVertex.id());
 //                WindupVertexFrame importedVertex = framedCentralJanusGraph.addFramedVertex(WindupVertexFrame.class);
                 Iterator<VertexProperty<String>> types = vertex.getElement().properties(WindupFrame.TYPE_PROP);
-                List<String> importedTypes = new ArrayList<>();
-                types.forEachRemaining(type -> {if (type.isPresent()) importedTypes.add(type.value());});
-                importedVertex.property(WindupFrame.TYPE_PROP, importedTypes);
-//                importedVertex.setProperty(WindupFrame.TYPE_PROP, importedTypes);
+                types.forEachRemaining(type -> type.ifPresent(value -> importedVertex.property(WindupFrame.TYPE_PROP, value)));
                 vertex.getElement().keys()
                         .stream()
                         .filter(s -> !WindupFrame.TYPE_PROP.equals(s))
@@ -191,11 +195,18 @@ public class WindupResource {
                 Edge importedEdge = outVertex.addEdge(edge.label(), inVertex/*, edge.properties()*/);
 //                framedCentralJanusGraph.addFramedEdge()
                 LOG.debugf("Added Edge %s", importedEdge);
+
+                Iterator<Property<String>> types = edge.properties(WindupEdgeFrame.TYPE_PROP);
+                types.forEachRemaining(type ->  type.ifPresent(value -> importedEdge.property(WindupFrame.TYPE_PROP, value)));
+                edge.keys()
+                        .stream()
+                        .filter(s -> !WindupEdgeFrame.TYPE_PROP.equals(s))
+                        .forEach(property -> {
+                            LOG.debugf("Edge %d has property %s with values %s", edge.id(), property, edgeFrame.getProperty(property));
+                            importedEdge.property(property, edgeFrame.getProperty(property));
+                        });
             }
-//            return Response.accepted().build();
-            List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
-            LOG.infof("Found %d issues", issues.size());
-            return Response.ok(frameIterableToResult(1L, issues, 1)).build();
+            return Response.accepted().build();
         } catch (Exception e) {
             LOG.errorf("Exception occurred: %s", e.getMessage());
             e.printStackTrace();

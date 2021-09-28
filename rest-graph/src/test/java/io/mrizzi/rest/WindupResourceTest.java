@@ -1,6 +1,7 @@
 package io.mrizzi.rest;
 
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -25,6 +26,7 @@ public class WindupResourceTest {
     }
 
     @Test
+    @Disabled
     public void testWindupGetIssueEndpoint() {
         given()
           .when().get(String.format("%s/issue", PATH))
@@ -38,12 +40,17 @@ public class WindupResourceTest {
         given()
           .when().put(String.format("%s/application/%d/analysis/", PATH, 0L))
           .then()
-             .statusCode(202)
-                .log().all();
+                .statusCode(202);
+
+        given()
+                .when().get(String.format("%s/issue", PATH))
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(35));
+
         given()
           .when().put(String.format("%s/application/%d/analysis/", PATH, 1L))
           .then()
-             .statusCode(202)
-                .log().all();
+                .statusCode(202);
     }
 }
