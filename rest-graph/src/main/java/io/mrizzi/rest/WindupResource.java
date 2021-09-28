@@ -1,6 +1,7 @@
 package io.mrizzi.rest;
 
 import com.syncleus.ferma.DelegatingFramedGraph;
+import com.syncleus.ferma.EdgeFrame;
 import com.syncleus.ferma.FramedGraph;
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
@@ -28,6 +29,7 @@ import org.jboss.windup.graph.SetInPropertiesHandler;
 import org.jboss.windup.graph.WindupAdjacencyMethodHandler;
 import org.jboss.windup.graph.WindupPropertyMethodHandler;
 import org.jboss.windup.graph.javahandler.JavaHandlerHandler;
+import org.jboss.windup.graph.model.WindupEdgeFrame;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
@@ -163,7 +165,37 @@ public class WindupResource {
             }
             LOG.infof("Central Graph count after %d", centralJanusGraph.traversal().V().count().next());
 //            centralJanusGraph.traversal().V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
-            return Response.accepted().build();
+            Iterator<WindupEdgeFrame> edgeIterator = framedGraph.traverse(GraphTraversalSource::E).frame(WindupEdgeFrame.class);
+            while (edgeIterator.hasNext()) {
+                WindupEdgeFrame edgeFrame = edgeIterator.next();
+                LOG.debugf("Adding Edge %s", edgeFrame.toPrettyString());
+                Edge edge = edgeFrame.getElement();
+
+                GraphTraversalSource graphTraversalSource = centralJanusGraph.traversal();
+
+                Object outVertexId = edge.outVertex().id();
+                Object importedOutVertexId = verticesBeforeAndAfter.get(outVertexId);
+                if (outVertexId == null || importedOutVertexId == null) LOG.warnf("inVertexId %s -> importedInVertexId %s", outVertexId, importedOutVertexId);
+                Vertex outVertex = graphTraversalSource.V(importedOutVertexId).next();
+
+                Object inVertexId = edge.outVertex().id();
+                Object importedInVertexId = verticesBeforeAndAfter.get(inVertexId);
+                if (inVertexId == null || importedInVertexId == null) LOG.warnf("inVertexId %s -> importedInVertexId %s", inVertexId, importedInVertexId);
+                GraphTraversal<Vertex, Vertex> edgeGraphTraversal = graphTraversalSource.V(importedInVertexId);
+                Vertex inVertex = null;
+                if (edgeGraphTraversal.hasNext()) {
+                    inVertex = edgeGraphTraversal.next();
+                } else {
+                    LOG.warnf("Missing IN vertex");
+                }
+                Edge importedEdge = outVertex.addEdge(edge.label(), inVertex/*, edge.properties()*/);
+//                framedCentralJanusGraph.addFramedEdge()
+                LOG.debugf("Added Edge %s", importedEdge);
+            }
+//            return Response.accepted().build();
+            List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
+            LOG.infof("Found %d issues", issues.size());
+            return Response.ok(frameIterableToResult(1L, issues, 1)).build();
         } catch (Exception e) {
             LOG.errorf("Exception occurred: %s", e.getMessage());
             e.printStackTrace();
