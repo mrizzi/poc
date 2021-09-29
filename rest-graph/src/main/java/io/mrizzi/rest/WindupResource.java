@@ -111,8 +111,12 @@ public class WindupResource {
     public Response issues() {
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
-        try (JanusGraph janusGraph = graphService.getCentralJanusGraph();
+/*        try (JanusGraph janusGraph = openJanusGraph();
             FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections))) {
+*/
+        try {
+            JanusGraph janusGraph = graphService.getCentralJanusGraph();
+            FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
             LOG.warnf("...running the query...");
             List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
             LOG.infof("Found %d issues", issues.size());
