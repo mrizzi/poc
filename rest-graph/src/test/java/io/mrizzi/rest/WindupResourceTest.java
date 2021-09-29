@@ -57,6 +57,15 @@ public class WindupResourceTest {
                 .when().get(String.format("%s/issue", PATH))
                 .then()
                 .statusCode(200)
-                .body("", iterableWithSize(70));
+                .body("", iterableWithSize(70),
+                        "findAll { issue -> issue.applicationId == '0' }", iterableWithSize(35),
+                        "findAll { issue -> issue.applicationId == '1' }", iterableWithSize(35));
+
+        given()
+                .queryParam("applicationId", 0)
+                .when().get(String.format("%s/issue", PATH))
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(35));
     }
 }
