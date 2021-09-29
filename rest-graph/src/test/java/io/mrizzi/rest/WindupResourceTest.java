@@ -52,5 +52,11 @@ public class WindupResourceTest {
           .when().put(String.format("%s/application/%d/analysis/", PATH, 1L))
           .then()
                 .statusCode(202);
+
+        given()
+                .when().get(String.format("%s/issue", PATH))
+                .then()
+                .statusCode(200)
+                .body("", iterableWithSize(70));
     }
 }
