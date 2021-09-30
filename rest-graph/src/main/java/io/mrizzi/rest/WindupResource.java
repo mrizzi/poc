@@ -195,10 +195,10 @@ public class WindupResource {
 
                 Object outVertexId = edge.outVertex().id();
                 Object importedOutVertexId = verticesBeforeAndAfter.get(outVertexId);
-                if (outVertexId == null || importedOutVertexId == null) LOG.warnf("inVertexId %s -> importedInVertexId %s", outVertexId, importedOutVertexId);
+                if (outVertexId == null || importedOutVertexId == null) LOG.warnf("outVertexId %s -> importedOutVertexId %s", outVertexId, importedOutVertexId);
                 Vertex outVertex = graphTraversalSource.V(importedOutVertexId).next();
 
-                Object inVertexId = edge.outVertex().id();
+                Object inVertexId = edge.inVertex().id();
                 Object importedInVertexId = verticesBeforeAndAfter.get(inVertexId);
                 if (inVertexId == null || importedInVertexId == null) LOG.warnf("inVertexId %s -> importedInVertexId %s", inVertexId, importedInVertexId);
                 GraphTraversal<Vertex, Vertex> edgeGraphTraversal = graphTraversalSource.V(importedInVertexId);
@@ -206,7 +206,8 @@ public class WindupResource {
                 if (edgeGraphTraversal.hasNext()) {
                     inVertex = edgeGraphTraversal.next();
                 } else {
-                    LOG.warnf("Missing IN vertex");
+                    LOG.warnf("Missing IN vertex. It seems like the %s vertex has not been imported", inVertexId);
+                    continue;
                 }
                 Edge importedEdge = outVertex.addEdge(edge.label(), inVertex/*, edge.properties()*/);
 //                framedCentralJanusGraph.addFramedEdge()
