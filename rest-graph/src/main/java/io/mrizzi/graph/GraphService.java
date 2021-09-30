@@ -48,7 +48,7 @@ public class GraphService {
         final JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
         if (!janusGraphManagement.containsPropertyKey(WindupFrame.TYPE_PROP)) {
             final PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(WindupFrame.TYPE_PROP).dataType(String.class).cardinality(Cardinality.LIST).make();
-            janusGraphManagement.buildIndex("w:winduptype", Vertex.class).addKey(typePropPropertyKey).buildCompositeIndex();
+            janusGraphManagement.buildIndex(WindupFrame.TYPE_PROP, Vertex.class).addKey(typePropPropertyKey).buildCompositeIndex();
             janusGraphManagement.buildIndex("edge-typevalue", Edge.class).addKey(typePropPropertyKey).buildCompositeIndex();
         }
         janusGraphManagement.commit();
