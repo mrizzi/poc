@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.iterableWithSize;
+import static org.hamcrest.Matchers.not;
 
 @QuarkusTest
 public class WindupResourceTest {
@@ -66,6 +68,8 @@ public class WindupResourceTest {
                 .when().get(String.format("%s/issue", PATH))
                 .then()
                 .statusCode(200)
-                .body("", iterableWithSize(35));
+                .body("", iterableWithSize(35),
+                        "vertices_out.EffortReportModel-issueCategory.vertices[0].categoryID", not(emptyOrNullString()),
+                        "vertices_out.file.vertices[0].filePath", not(emptyOrNullString()));
     }
 }
