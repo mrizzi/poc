@@ -273,12 +273,12 @@ public class WindupResource {
         List<Map<String, Object>> result = new ArrayList<>();
         for (WindupVertexFrame frame : frames)
         {
-            result.add(convertToMap(/*ctx,*/ frame.getElement()));
+            result.add(convertToMap(/*ctx,*/ frame.getElement(), true));
         }
         return result;
     }
 
-    protected Map<String, Object> convertToMap(/*GraphMarshallingContext ctx,*/ Vertex vertex)
+    protected Map<String, Object> convertToMap(/*GraphMarshallingContext ctx,*/ Vertex vertex, boolean addEdges)
     {
         Map<String, Object> result = new HashMap<>();
 
@@ -313,9 +313,11 @@ public class WindupResource {
         }
 
 
-        Map<String, Object> outVertices = new HashMap<>();
-        result.put(GraphResource.VERTICES_OUT, outVertices);
-        addEdges(/*ctx,*/ vertex, Direction.OUT, outVertices);
+        if (addEdges) {
+            Map<String, Object> outVertices = new HashMap<>();
+            result.put(GraphResource.VERTICES_OUT, outVertices);
+            addEdges(/*ctx,*/ vertex, Direction.OUT, outVertices);
+        }
 
 /*
         if (ctx.includeInVertices) {
@@ -370,13 +372,12 @@ public class WindupResource {
                 linkedVertices = (List<Map<String, Object>>) edgeDetails.get(GraphResource.VERTICES);
             }
 
-/*
             Vertex otherVertex = direction == Direction.OUT ? edge.inVertex() : edge.outVertex();
 
             // Recursion
-            ctx.remainingDepth--;
-            Map<String, Object> otherVertexMap = convertToMap(ctx, otherVertex);
-            ctx.remainingDepth++;
+//            ctx.remainingDepth--;
+            Map<String, Object> otherVertexMap = convertToMap(/*ctx,*/ otherVertex, false);
+//            ctx.remainingDepth++;
 
             // Add edge properties if any
             if (!edge.keys().isEmpty())
@@ -390,7 +391,6 @@ public class WindupResource {
             }
 
             linkedVertices.add(otherVertexMap);
-*/
         }
     }
 }
