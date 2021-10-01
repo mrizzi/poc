@@ -2,11 +2,13 @@ package io.mrizzi.graph;
 
 import io.mrizzi.rest.WindupResource;
 import io.quarkus.runtime.Startup;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.janusgraph.core.Cardinality;
+import org.janusgraph.core.ConfiguredGraphFactory;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.core.PropertyKey;
@@ -38,20 +40,34 @@ public class GraphService {
 
     @PreDestroy
     void destroy() {
+        LOG.infof("Is central Janus Graph transaction open? %b", janusGraph.tx().isOpen());
         LOG.infof("Closing Central Janus Graph properties file %s", centralGraphProperties);
         janusGraph.close();
+        LOG.infof("Is central Janus Graph transaction still open? %b", janusGraph.tx().isOpen());
     }
 
     private JanusGraph openCentralJanusGraph() throws ConfigurationException {
         LOG.infof("Opening Central Janus Graph properties file %s", centralGraphProperties);
-        final JanusGraph janusGraph = JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
+        final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
+        configuration.setProperty("graph.unique-instance-id", "central_" + System.nanoTime());
+        final JanusGraph janusGraph = JanusGraphFactory.open(configuration);
+/*
+        final JanusGraph janusGraph = JanusGraphFactory.build()
+                .set("storage.backend", "berkeleyje")
+                .set("storage.directory", "src/test/resources/graph2/central-graph")
+                .set("storage.transactions", true)
+                .open();
+*/
+//        final JanusGraph janusGraph = ConfiguredGraphFactory.open("central");
+        LOG.infof("Central Graph vertex count at startup = %d", janusGraph.traversal().V().count().next());
         final JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
+        LOG.infof("Open instances: %s", janusGraphManagement.getOpenInstances());
         if (!janusGraphManagement.containsPropertyKey(WindupFrame.TYPE_PROP)) {
             final PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(WindupFrame.TYPE_PROP).dataType(String.class).cardinality(Cardinality.LIST).make();
             janusGraphManagement.buildIndex(WindupFrame.TYPE_PROP, Vertex.class).addKey(typePropPropertyKey).buildCompositeIndex();
             janusGraphManagement.buildIndex("edge-typevalue", Edge.class).addKey(typePropPropertyKey).buildCompositeIndex();
+            janusGraphManagement.commit();
         }
-        janusGraphManagement.commit();
         return janusGraph;
     }
     

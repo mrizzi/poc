@@ -110,6 +110,8 @@ public class WindupResource {
         try {
             JanusGraph janusGraph = graphService.getCentralJanusGraph();
             FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
+            LOG.infof("Central Graph vertex count = %d", janusGraph.traversal().V().count().next());
+//            janusGraph.vertices().forEachRemaining(LOG::info);
             LOG.warnf("...running the query...");
 /*
             List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
