@@ -2,8 +2,8 @@ package io.mrizzi.graph;
 
 import io.mrizzi.rest.WindupResource;
 import io.quarkus.runtime.Startup;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -48,10 +48,8 @@ public class GraphService {
 
     private JanusGraph openCentralJanusGraph() throws ConfigurationException {
         LOG.infof("Opening Central Janus Graph properties file %s", centralGraphProperties);
-//        final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
-        final PropertiesConfiguration configuration = new PropertiesConfiguration(centralGraphProperties);
+        final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
         configuration.getKeys().forEachRemaining(LOG::info);
-        LOG.infof("getBasePath = %s, storage.backend = %s", configuration.getFile().getAbsolutePath(), configuration.getProperty("storage.backend"));
         configuration.setProperty("graph.unique-instance-id", "central_" + System.nanoTime());
         final JanusGraph janusGraph = JanusGraphFactory.open(configuration);
 /*

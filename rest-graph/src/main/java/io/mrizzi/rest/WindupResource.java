@@ -7,8 +7,7 @@ import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import com.syncleus.ferma.typeresolvers.PolymorphicTypeResolver;
 import io.mrizzi.graph.AnnotationFrameFactory;
 import io.mrizzi.graph.GraphService;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -255,14 +254,12 @@ public class WindupResource {
 
     private JanusGraph openJanusGraph() throws ConfigurationException {
         LOG.debugf("Opening Janus Graph properties file %s", graphProperties);
-//        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(graphProperties));
-        return JanusGraphFactory.open(new PropertiesConfiguration(graphProperties));
+        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(graphProperties));
     }
 
     private JanusGraph openCentralJanusGraph() throws ConfigurationException {
         LOG.debugf("Opening Central Janus Graph properties file %s", centralGraphProperties);
-//        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
-        return JanusGraphFactory.open(new PropertiesConfiguration(centralGraphProperties));
+        return JanusGraphFactory.open(ConfigurationUtil.loadPropertiesConfig(centralGraphProperties));
     }
 
         /**
