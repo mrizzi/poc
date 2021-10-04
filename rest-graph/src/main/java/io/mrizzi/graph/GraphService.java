@@ -2,8 +2,8 @@ package io.mrizzi.graph;
 
 import io.mrizzi.rest.WindupResource;
 import io.quarkus.runtime.Startup;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -26,7 +26,7 @@ import java.io.File;
 @ApplicationScoped
 public class GraphService {
     private static final Logger LOG = Logger.getLogger(WindupResource.class);
-    private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "centralGraphConfiguration.properties";
+    private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "src/main/resources/centralGraphConfiguration.properties";
 
     @ConfigProperty(defaultValue = DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.central.properties.file.path")
     File centralGraphProperties;
@@ -48,7 +48,10 @@ public class GraphService {
 
     private JanusGraph openCentralJanusGraph() throws ConfigurationException {
         LOG.infof("Opening Central Janus Graph properties file %s", centralGraphProperties);
-        final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
+//        final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
+        final PropertiesConfiguration configuration = new PropertiesConfiguration(centralGraphProperties);
+        configuration.getKeys().forEachRemaining(LOG::info);
+        LOG.infof("getBasePath = %s, storage.backend = %s", configuration.getFile().getAbsolutePath(), configuration.getProperty("storage.backend"));
         configuration.setProperty("graph.unique-instance-id", "central_" + System.nanoTime());
         final JanusGraph janusGraph = JanusGraphFactory.open(configuration);
 /*

@@ -19,7 +19,8 @@
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>2.2.3.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-    <janusgraph.version>0.6.0</janusgraph.version>
+<!--    <janusgraph.version>0.6.0</janusgraph.version>-->
+    <janusgraph.version>0.3.1</janusgraph.version>
     <windup.version>5.2.0.Final</windup.version>
     <tinkerpop.version>3.5.1</tinkerpop.version>
   </properties>
@@ -77,11 +78,13 @@
           </exclusion>
       </exclusions>
     </dependency>
+<!--
     <dependency>
       <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-inmemory</artifactId>
       <version>${janusgraph.version}</version>
     </dependency>
+-->
     <dependency>
       <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-berkeleyje</artifactId>
