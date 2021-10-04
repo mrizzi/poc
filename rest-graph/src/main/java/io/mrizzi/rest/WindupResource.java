@@ -226,6 +226,7 @@ public class WindupResource {
                             importedEdge.property(property, edgeFrame.getProperty(property));
                         });
             }
+            centralJanusGraph.tx().commit();
             return Response.accepted().build();
         } catch (Exception e) {
             LOG.errorf("Exception occurred: %s", e.getMessage());
