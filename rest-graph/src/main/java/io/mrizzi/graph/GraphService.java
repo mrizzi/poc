@@ -1,6 +1,5 @@
 package io.mrizzi.graph;
 
-import io.mrizzi.rest.WindupResource;
 import io.quarkus.runtime.Startup;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -8,7 +7,6 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.janusgraph.core.Cardinality;
-import org.janusgraph.core.ConfiguredGraphFactory;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.core.PropertyKey;
@@ -25,7 +23,7 @@ import java.io.File;
 @Startup
 @ApplicationScoped
 public class GraphService {
-    private static final Logger LOG = Logger.getLogger(WindupResource.class);
+    private static final Logger LOG = Logger.getLogger(GraphService.class);
     private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "src/main/resources/centralGraphConfiguration.properties";
 
     @ConfigProperty(defaultValue = DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.central.properties.file.path")
