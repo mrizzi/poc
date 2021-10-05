@@ -12,6 +12,7 @@ import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.core.PropertyKey;
 import org.janusgraph.core.schema.JanusGraphManagement;
+import org.janusgraph.core.schema.Mapping;
 import org.janusgraph.util.system.ConfigurationUtil;
 import org.jboss.logging.Logger;
 import org.jboss.windup.graph.model.WindupFrame;
@@ -20,6 +21,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
+
+import static io.mrizzi.rest.WindupResource.PATH_PARAM_APPLICATION_ID;
 
 @Startup
 @ApplicationScoped
@@ -57,6 +60,10 @@ public class GraphService {
             final PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(WindupFrame.TYPE_PROP).dataType(String.class).cardinality(Cardinality.LIST).make();
             janusGraphManagement.buildIndex(WindupFrame.TYPE_PROP, Vertex.class).addKey(typePropPropertyKey).buildCompositeIndex();
             janusGraphManagement.buildIndex("edge-typevalue", Edge.class).addKey(typePropPropertyKey).buildCompositeIndex();
+
+            final PropertyKey applicationIdPropertyKey = janusGraphManagement.makePropertyKey(PATH_PARAM_APPLICATION_ID).dataType(String.class).cardinality(Cardinality.SINGLE).make();
+            janusGraphManagement.buildIndex(PATH_PARAM_APPLICATION_ID, Vertex.class).addKey(applicationIdPropertyKey, Mapping.STRING.asParameter()).buildMixedIndex("search");
+
             janusGraphManagement.commit();
         }
         return janusGraph;

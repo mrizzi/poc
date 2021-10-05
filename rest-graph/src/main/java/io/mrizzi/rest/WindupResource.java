@@ -62,7 +62,7 @@ public class WindupResource {
     private static final Logger LOG = Logger.getLogger(WindupResource.class);
     private static final String DEFAULT_GRAPH_CONFIGURATION_FILE_NAME = "graphConfiguration.properties";
     private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "centralGraphConfiguration.properties";
-    private static final String PATH_PARAM_APPLICATION_ID = "applicationId";
+    public static final String PATH_PARAM_APPLICATION_ID = "applicationId";
 
     @ConfigProperty(defaultValue = DEFAULT_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.properties.file.path")
     File graphProperties;
