@@ -153,9 +153,9 @@ public class WindupResource {
             final Graph.Features features = centralJanusGraph.features();
             final Graph.Features.GraphFeatures graphFeatures = features.graph();
             Graph.Features.VertexPropertyFeatures vertexPropertyFeatures = features.vertex().properties();
-            LOG.infof("supportsThreadedTransactions : %b", graphFeatures.supportsThreadedTransactions());
-            LOG.infof("supportsTransactions : %b", graphFeatures.supportsTransactions());
-            LOG.infof("supportsMixedListValues : %b", vertexPropertyFeatures.supportsMixedListValues());
+            LOG.debugf("supportsThreadedTransactions : %b", graphFeatures.supportsThreadedTransactions());
+            LOG.debugf("supportsTransactions : %b", graphFeatures.supportsTransactions());
+            LOG.debugf("supportsMixedListValues : %b", vertexPropertyFeatures.supportsMixedListValues());
             GraphTraversal<Vertex, Vertex> traversal = centralJanusGraph.traversal().V();
             LOG.infof("Central Graph count before %d", traversal.count().next());
 /*
