@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.not;
 
@@ -31,10 +32,11 @@ public class WindupResourceTest {
     @Disabled
     public void testWindupGetIssueEndpoint() {
         given()
-          .when().get(String.format("%s/issue", PATH))
+            .queryParam("applicationId", 0)
+            .when().get(String.format("%s/issue", PATH))
           .then()
              .statusCode(200)
-             .body("", iterableWithSize(35));
+             .body("size()", is(35));
     }
 
     @Test
@@ -71,5 +73,20 @@ public class WindupResourceTest {
                 .body("", iterableWithSize(35),
                         "vertices_out.EffortReportModel-issueCategory.vertices[0].categoryID", not(emptyOrNullString()),
                         "vertices_out.file.vertices[0].filePath", not(emptyOrNullString()));
+
+        given()
+                .when().put(String.format("%s/application/%d/analysis/", PATH, 0L))
+                .then()
+                .statusCode(202);
+
+        given()
+                .queryParam("applicationId", 0)
+                .when().get(String.format("%s/issue", PATH))
+                .then()
+                .statusCode(200)
+                .body("size()", is(35),
+                        "vertices_out.EffortReportModel-issueCategory.vertices[0].categoryID", not(emptyOrNullString()),
+                        "vertices_out.file.vertices[0].filePath", not(emptyOrNullString()));
+
     }
 }

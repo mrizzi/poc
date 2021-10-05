@@ -156,16 +156,15 @@ public class WindupResource {
             LOG.debugf("supportsThreadedTransactions : %b", graphFeatures.supportsThreadedTransactions());
             LOG.debugf("supportsTransactions : %b", graphFeatures.supportsTransactions());
             LOG.debugf("supportsMixedListValues : %b", vertexPropertyFeatures.supportsMixedListValues());
-            GraphTraversal<Vertex, Vertex> traversal = centralJanusGraph.traversal().V();
-            LOG.infof("Central Graph count before %d", traversal.count().next());
-/*
-            GraphTraversal<Vertex, Vertex> traversal = janusGraph.traversal().V();
-            while (traversal.hasNext()) {
-                Object vertex = traversal.next();
-                LOG.warnf("Adding Vertex %d with winduptype '%s'", vertex.id(), vertex.properties(WindupFrame.TYPE_PROP));
-                centralJanusGraph.addVertex(vertex);
-            }
-*/
+
+            // Delete the previous graph for the PATH_PARAM_APPLICATION_ID provided
+            LOG.infof("Delete the previous vertices with Application ID %s", applicationId);
+            if (LOG.isDebugEnabled()) LOG.debugf("Before deleting vertices with Application ID %s, central graph has %d vertices and %d edges", applicationId, centralJanusGraph.traversal().V().count().next(),  centralJanusGraph.traversal().E().count().next());
+            final GraphTraversal<Vertex, Vertex> previousVertexGraph = centralJanusGraph.traversal().V();
+            previousVertexGraph.has(PATH_PARAM_APPLICATION_ID, applicationId);
+            previousVertexGraph.drop().iterate();
+            if (LOG.isDebugEnabled()) LOG.debugf("After deletion of vertices with Application ID %s, central graph has %d vertices and %d edges", applicationId, centralJanusGraph.traversal().V().count().next(),  centralJanusGraph.traversal().E().count().next());
+
             final Iterator<WindupVertexFrame> vertexIterator = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP)).frame(WindupVertexFrame.class);
             while (vertexIterator.hasNext()) {
                 WindupVertexFrame vertex = vertexIterator.next();
