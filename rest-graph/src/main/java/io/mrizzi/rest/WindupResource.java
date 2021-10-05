@@ -110,8 +110,6 @@ public class WindupResource {
         try {
             JanusGraph janusGraph = graphService.getCentralJanusGraph();
             FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
-            LOG.infof("Central Graph vertex count = %d", janusGraph.traversal().V().count().next());
-//            janusGraph.vertices().forEachRemaining(LOG::info);
             LOG.warnf("...running the query...");
 /*
             List<? extends InlineHintModel> issues = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class))).toList(InlineHintModel.class);
@@ -128,7 +126,7 @@ public class WindupResource {
             hints.has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class));
             if (StringUtils.isNotBlank(applicationId)) hints.has(PATH_PARAM_APPLICATION_ID, applicationId);
             final List<Vertex> issues = hints.toList();
-            LOG.infof("Found %d issues", issues.size());
+            LOG.infof("Found %d hints for application ID %s", issues.size(), applicationId);
             return Response.ok(frameIterableToResult(1L, new FramedVertexIterable<>(framedGraph, issues, InlineHintModel.class), 1)).build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,7 +182,7 @@ public class WindupResource {
                 });
                 importedVertex.property(PATH_PARAM_APPLICATION_ID, applicationId);
             }
-            LOG.infof("Central Graph count after %d", centralJanusGraph.traversal().V().count().next());
+            if (LOG.isDebugEnabled()) LOG.debugf("Central Graph count after %d", centralJanusGraph.traversal().V().count().next());
 //            centralJanusGraph.traversal().V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
             Iterator<WindupEdgeFrame> edgeIterator = framedGraph.traverse(GraphTraversalSource::E).frame(WindupEdgeFrame.class);
             while (edgeIterator.hasNext()) {
