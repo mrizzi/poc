@@ -224,6 +224,7 @@ public class WindupResource {
                             LOG.debugf("Edge %d has property %s with values %s", edge.id(), property, edgeFrame.getProperty(property));
                             importedEdge.property(property, edgeFrame.getProperty(property));
                         });
+                importedEdge.property(PATH_PARAM_APPLICATION_ID, applicationId);
             }
             centralJanusGraph.tx().commit();
             return Response.accepted().build();
