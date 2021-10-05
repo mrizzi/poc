@@ -50,15 +50,7 @@ public class GraphService {
         final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
         LOG.debugf("Central Janus Graph configuration:\n%s", ConfigurationUtils.toString(configuration));
         final JanusGraph janusGraph = JanusGraphFactory.open(configuration);
-/*
-        final JanusGraph janusGraph = JanusGraphFactory.build()
-                .set("storage.backend", "berkeleyje")
-                .set("storage.directory", "src/test/resources/graph2/central-graph")
-                .set("storage.transactions", true)
-                .open();
-*/
-//        final JanusGraph janusGraph = ConfiguredGraphFactory.open("central");
-        LOG.infof("Central Graph vertex count at startup = %d", janusGraph.traversal().V().count().next());
+        if (LOG.isDebugEnabled()) LOG.debugf("Central Graph vertex count at startup = %d", janusGraph.traversal().V().count().next());
         final JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
         LOG.infof("Open instances: %s", janusGraphManagement.getOpenInstances());
         if (!janusGraphManagement.containsPropertyKey(WindupFrame.TYPE_PROP)) {
