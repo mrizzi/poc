@@ -7,6 +7,7 @@ import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import com.syncleus.ferma.typeresolvers.PolymorphicTypeResolver;
 import io.mrizzi.graph.AnnotationFrameFactory;
 import io.mrizzi.graph.GraphService;
+import io.mrizzi.jms.AnalysisExecutionProducer;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
@@ -72,6 +73,9 @@ public class WindupResource {
 
     @Inject
     GraphService graphService;
+
+    @Inject
+    AnalysisExecutionProducer analysisExecutionProducer;
 
     @GET
     @Path("/issueCategory")
@@ -236,6 +240,13 @@ public class WindupResource {
     @Path("/tmp")
     public Response tmp() {
         return updateGraph(Long.toString(System.currentTimeMillis()));
+    }
+
+    @GET
+    @Path("/trigger")
+    public Response trigger() {
+        analysisExecutionProducer.triggerAnalysis("42");
+        return Response.ok().build();
     }
 
     private Set<MethodHandler> getMethodHandlers() {
