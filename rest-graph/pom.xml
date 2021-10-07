@@ -89,6 +89,11 @@
     </dependency>
     <dependency>
       <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-cql</artifactId>
+      <version>${janusgraph.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-lucene</artifactId>
       <version>${janusgraph.version}</version>
     </dependency>
@@ -138,6 +143,15 @@
       <groupId>org.jboss.windup.web.addons</groupId>
       <artifactId>windup-web-support-api</artifactId>
       <version>${windup.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.windup.web</groupId>
+      <artifactId>windup-web-jpa-model</artifactId>
+      <version>${windup.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-artemis-jms</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
