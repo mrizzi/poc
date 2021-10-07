@@ -9,6 +9,7 @@ import io.mrizzi.graph.AnnotationFrameFactory;
 import io.mrizzi.graph.GraphService;
 import io.mrizzi.jms.AnalysisExecutionProducer;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -23,6 +24,7 @@ import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.util.system.ConfigurationUtil;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.MapInAdjacentPropertiesHandler;
 import org.jboss.windup.graph.MapInAdjacentVerticesHandler;
@@ -40,7 +42,9 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.web.addons.websupport.rest.graph.GraphResource;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -49,6 +53,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -236,6 +244,31 @@ public class WindupResource {
         return Response.serverError().build();
     }
 
+    @POST
+    @Path("/analysis/")
+    @Consumes({ MediaType.MULTIPART_FORM_DATA })
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response runAnalysis(@MultipartForm AnalysisMultipartBody analysisRequest) {
+        try {
+            File application = new File("/home/mrizzi/Tools/windup/sample/input/prototype/" + analysisRequest.applicationFileName);
+            Files.createDirectories(java.nio.file.Path.of(application.getAbsolutePath()));
+            Files.copy(
+                    analysisRequest.applicationFile,
+                    application.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+            IOUtils.closeQuietly(analysisRequest.applicationFile);
+            long analysisId = analysisExecutionProducer.triggerAnalysis(application.getAbsolutePath(),
+                    analysisRequest.sources,
+                    analysisRequest.targets,
+                    analysisRequest.packages,
+                    analysisRequest.sourceMode);
+            return Response.created(URI.create(String.format("/windup/analysis/%d", analysisId))).build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Response.serverError().build();
+    }
+
     @GET
     @Path("/tmp")
     public Response tmp() {
@@ -245,8 +278,15 @@ public class WindupResource {
     @GET
     @Path("/trigger")
     public Response trigger() {
-        analysisExecutionProducer.triggerAnalysis("42");
-        return Response.ok().build();
+        return Response.created(
+                URI.create(
+                        String.format("/windup/analysis/%d",
+                        analysisExecutionProducer.triggerAnalysis(
+                                "/home/mrizzi/Tools/windup/sample/input/jee-example-app-1.0.0.ear",
+                                null, "eap7,cloud-readiness,quarkus,rhr", null, null)
+                        )
+                ))
+                .build();
     }
 
     private Set<MethodHandler> getMethodHandlers() {

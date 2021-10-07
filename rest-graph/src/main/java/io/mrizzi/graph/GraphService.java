@@ -196,6 +196,7 @@ public class GraphService {
         } catch (Exception e) {
             LOG.errorf("Exception occurred: %s", e.getMessage());
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

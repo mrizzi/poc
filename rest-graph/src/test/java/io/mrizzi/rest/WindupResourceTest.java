@@ -4,6 +4,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.emptyOrNullString;
@@ -88,5 +90,19 @@ public class WindupResourceTest {
                         "vertices_out.EffortReportModel-issueCategory.vertices[0].categoryID", not(emptyOrNullString()),
                         "vertices_out.file.vertices[0].filePath", not(emptyOrNullString()));
 
+    }
+
+    @Test
+    public void testWindupPostAnalysisEndpoint() {
+        given()
+                .multiPart("application", new File("/home/mrizzi/Tools/windup/sample/input/jee-example-app-1.0.0.ear"))
+                .multiPart("applicationFileName","foo.ear")
+                .multiPart("targets","eap7,cloud-readiness,quarkus,rhr")
+                .when()
+                .log().all()
+                .post(String.format("%s/analysis/", PATH))
+                .then()
+                .log().all()
+                .statusCode(201);
     }
 }

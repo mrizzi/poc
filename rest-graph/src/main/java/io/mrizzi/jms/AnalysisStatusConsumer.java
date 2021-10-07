@@ -58,6 +58,7 @@ public class AnalysisStatusConsumer implements Runnable {
                     case COMPLETED:
                         System.out.println("COMPLETED = " + lastUpdate);
                         graphService.updateCentralJanusGraph(windupExecution.getOutputPath(), Long.toString(message.getLongProperty("projectId")));
+                        // TODO delete the application file now
                         System.out.println("COMPLETED updateCentralJanusGraph");
                         break;
                     default:
