@@ -98,6 +98,11 @@
       <version>${janusgraph.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-es</artifactId>
+      <version>${janusgraph.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.windup.reporting</groupId>
       <artifactId>windup-reporting-api</artifactId>
       <version>${windup.version}</version>
