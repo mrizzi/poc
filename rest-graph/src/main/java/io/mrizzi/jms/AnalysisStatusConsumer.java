@@ -1,8 +1,11 @@
 package io.mrizzi.jms;
 
 import io.mrizzi.graph.GraphService;
+import io.mrizzi.rest.WindupBroadcasterResource;
+import io.mrizzi.rest.WindupResource;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
+import org.jboss.logging.Logger;
 import org.jboss.windup.web.services.json.WindupExecutionJSONUtil;
 import org.jboss.windup.web.services.model.WindupExecution;
 
@@ -22,11 +25,16 @@ import java.util.concurrent.Executors;
 @ApplicationScoped
 public class AnalysisStatusConsumer implements Runnable {
 
+    private static final Logger LOG = Logger.getLogger(AnalysisStatusConsumer.class);
+
     @Inject
     ConnectionFactory connectionFactory;
 
     @Inject
     GraphService graphService;
+
+    @Inject
+    WindupBroadcasterResource windupBroadcasterResource;
 
     private final ExecutorService scheduler = Executors.newSingleThreadExecutor();
 
@@ -52,14 +60,18 @@ public class AnalysisStatusConsumer implements Runnable {
                 Message message = consumer.receive();
                 if (message == null) return;
                 lastUpdate = message.getBody(String.class);
-                System.out.println("lastUpdate = " + lastUpdate);
+                LOG.debugf("lastUpdate = %s", lastUpdate);
                 WindupExecution windupExecution = WindupExecutionJSONUtil.readJSON(lastUpdate);
+                windupBroadcasterResource.broadcastMessage(lastUpdate);
                 switch (windupExecution.getState()) {
                     case COMPLETED:
-                        System.out.println("COMPLETED = " + lastUpdate);
-                        graphService.updateCentralJanusGraph(windupExecution.getOutputPath(), Long.toString(message.getLongProperty("projectId")));
+                        LOG.infof("COMPLETED: %s", lastUpdate);
+                        String id = Long.toString(message.getLongProperty("projectId"));
+                        windupBroadcasterResource.broadcastMessage(String.format("{\"id\":%s,\"state\":\"MERGING\",\"totalWork\":0,\"workCompleted\":0}", id));
+                        graphService.updateCentralJanusGraph(windupExecution.getOutputPath(), id);
+                        windupBroadcasterResource.broadcastMessage(String.format("{\"id\":%s,\"state\":\"MERGED\",\"totalWork\":0,\"workCompleted\":1}", id));
                         // TODO delete the application file now
-                        System.out.println("COMPLETED updateCentralJanusGraph");
+                        LOG.debug("COMPLETED updateCentralJanusGraph");
                         break;
                     default:
                         break;
