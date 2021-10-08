@@ -71,6 +71,10 @@
       <artifactId>quarkus-arc</artifactId>
     </dependency>
     <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-smallrye-openapi</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-core</artifactId>
       <version>${janusgraph.version}</version>
