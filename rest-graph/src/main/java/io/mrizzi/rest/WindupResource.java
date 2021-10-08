@@ -251,7 +251,7 @@ public class WindupResource {
     public Response runAnalysis(@MultipartForm AnalysisMultipartBody analysisRequest) {
         try {
             File application = new File("/home/mrizzi/Tools/windup/sample/input/prototype/" + analysisRequest.applicationFileName);
-            Files.createDirectories(java.nio.file.Path.of(application.getAbsolutePath()));
+            Files.createDirectories(java.nio.file.Path.of(application.getParentFile().getAbsolutePath()));
             Files.copy(
                     analysisRequest.applicationFile,
                     application.toPath(),
@@ -262,7 +262,11 @@ public class WindupResource {
                     analysisRequest.targets,
                     analysisRequest.packages,
                     analysisRequest.sourceMode);
-            return Response.created(URI.create(String.format("/windup/analysis/%d", analysisId))).build();
+            return Response
+                    .created(URI.create(String.format("/windup/analysis/%d", analysisId)))
+                    .header("Issues-Location", URI.create(String.format("/windup/analysis/%d/issues", analysisId)).toString())
+                    .header("Analysis-Id", analysisId)
+                    .build();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -278,14 +282,13 @@ public class WindupResource {
     @GET
     @Path("/trigger")
     public Response trigger() {
-        return Response.created(
-                URI.create(
-                        String.format("/windup/analysis/%d",
-                        analysisExecutionProducer.triggerAnalysis(
-                                "/home/mrizzi/Tools/windup/sample/input/jee-example-app-1.0.0.ear",
-                                null, "eap7,cloud-readiness,quarkus,rhr", null, null)
-                        )
-                ))
+        long analysisId = analysisExecutionProducer.triggerAnalysis(
+                "/home/mrizzi/Tools/windup/sample/input/jee-example-app-1.0.0.ear",
+                null, "eap7,cloud-readiness,quarkus,rhr", null, null);
+        return Response
+                .created(URI.create(String.format("/windup/analysis/%d", analysisId)))
+                .header("Issues-Location", URI.create(String.format("/windup/analysis/%d/issues", analysisId)))
+                .header("Analysis-Id", analysisId)
                 .build();
     }
 
