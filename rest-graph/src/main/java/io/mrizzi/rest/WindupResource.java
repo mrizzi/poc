@@ -72,6 +72,7 @@ public class WindupResource {
     private static final String DEFAULT_GRAPH_CONFIGURATION_FILE_NAME = "graphConfiguration.properties";
     private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "centralGraphConfiguration.properties";
     public static final String PATH_PARAM_APPLICATION_ID = "applicationId";
+    public static final String PATH_PARAM_ANALYSIS_ID = "analysisId";
 
     @ConfigProperty(defaultValue = DEFAULT_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.properties.file.path")
     File graphProperties;
@@ -139,6 +140,27 @@ public class WindupResource {
             if (StringUtils.isNotBlank(applicationId)) hints.has(PATH_PARAM_APPLICATION_ID, applicationId);
             final List<Vertex> issues = hints.toList();
             LOG.infof("Found %d hints for application ID %s", issues.size(), applicationId);
+            return Response.ok(frameIterableToResult(1L, new FramedVertexIterable<>(framedGraph, issues, InlineHintModel.class), 1)).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.serverError().build();
+    }
+
+    @GET
+    @Path("/analysis/{" + PATH_PARAM_ANALYSIS_ID + "}/issues")
+    public Response analysisIssues(@PathParam(PATH_PARAM_ANALYSIS_ID) String analysisId) {
+        final ReflectionCache reflections = new ReflectionCache();
+        final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
+        try {
+            JanusGraph janusGraph = graphService.getCentralJanusGraph();
+            FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
+            LOG.warnf("...running the query...");
+            final GraphTraversal<Vertex, Vertex> hints = new GraphTraversalSource(janusGraph).V();
+            hints.has(WindupFrame.TYPE_PROP, GraphTypeManager.getTypeValue(InlineHintModel.class));
+            if (StringUtils.isNotBlank(analysisId)) hints.has(PATH_PARAM_APPLICATION_ID, analysisId);
+            final List<Vertex> issues = hints.toList();
+            LOG.infof("Found %d hints for application ID %s", issues.size(), analysisId);
             return Response.ok(frameIterableToResult(1L, new FramedVertexIterable<>(framedGraph, issues, InlineHintModel.class), 1)).build();
         } catch (Exception e) {
             e.printStackTrace();
