@@ -36,6 +36,7 @@ public class AnalysisExecutionProducer {
     ConnectionFactory connectionFactory;
 
     public long triggerAnalysis(String applicationFilePath, String sources, String targets, String packages, Boolean sourceMode) {
+        LOG.debugf("JMS Connection Factory: %s", connectionFactory.toString());
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
             TextMessage executionRequestMessage = context.createTextMessage();
 
