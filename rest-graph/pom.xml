@@ -305,5 +305,35 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>minikube</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <id>push-image-to-minikube</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>push-image-to-minikube.sh</executable>
+                  <arguments>
+                    <argument>${project.artifactId}</argument>
+                    <argument>${project.version}</argument>
+<!--                    <argument>${quarkus.package.type}</argument>-->
+                  </arguments>
+                  <async>false</async>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
