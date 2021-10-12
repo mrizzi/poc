@@ -40,6 +40,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,7 +63,7 @@ public class GraphService {
     private JanusGraph janusGraph;
 
     @PostConstruct
-    void init() throws ConfigurationException {
+    void init() throws ConfigurationException, IOException {
         janusGraph = openCentralJanusGraph();
     }
 
@@ -72,12 +75,25 @@ public class GraphService {
         LOG.infof("Is central Janus Graph transaction still open? %b", janusGraph.tx().isOpen());
     }
 
-    private JanusGraph openCentralJanusGraph() throws ConfigurationException {
+    private JanusGraph openCentralJanusGraph() throws ConfigurationException, IOException {
         LOG.infof("Opening Central Janus Graph properties file %s", centralGraphProperties);
         final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
+        Path graph = Files.createDirectories(Path.of("/opt/windup/central-graph/graph"));
+        Files.createDirectories(Path.of("/opt/windup/central-graph/search"));
+        configuration.setProperty("storage.directory", "/opt/windup/central-graph/graph");
+        configuration.setProperty("index.search.directory", "/opt/windup/central-graph/search");
         LOG.debugf("Central Janus Graph configuration:\n%s", ConfigurationUtils.toString(configuration));
+        try {
+            LOG.debugf("graph folder can write (%b), read (%b), execute (%b)", graph.toFile().canWrite(), graph.toFile().canRead(), graph.toFile().canExecute());
+            // this generates a
+            // java.io.IOException: Mount point not found
+	        //   at java.base/sun.nio.fs.LinuxFileStore.findMountEntry(LinuxFileStore.java:105)
+            // due to https://gitlab.alpinelinux.org/alpine/aports/-/issues/7093
+            Files.getFileStore(graph);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         final JanusGraph janusGraph = JanusGraphFactory.open(configuration);
-        if (LOG.isDebugEnabled()) LOG.debugf("Central Graph vertex count at startup = %d", janusGraph.traversal().V().count().next());
         final JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
         LOG.infof("Open instances: %s", janusGraphManagement.getOpenInstances());
         if (!janusGraphManagement.containsPropertyKey(WindupFrame.TYPE_PROP)) {
@@ -89,7 +105,10 @@ public class GraphService {
             janusGraphManagement.buildIndex(PATH_PARAM_APPLICATION_ID, Vertex.class).addKey(applicationIdPropertyKey, Mapping.STRING.asParameter()).buildMixedIndex("search");
 
             janusGraphManagement.commit();
+            LOG.info("done 0");
         }
+        // TODO how to count with `query.force-index = true` property
+//        if (LOG.isDebugEnabled()) LOG.debugf("Central Graph vertex count at startup = %d", janusGraph.traversal().V().count().next());
 /*
         try {
             ManagementSystem.awaitGraphIndexStatus(janusGraph, PATH_PARAM_APPLICATION_ID).status(REGISTERED, ENABLED).call();
@@ -97,6 +116,7 @@ public class GraphService {
             e.printStackTrace();
         }
 */
+        LOG.info("done 1");
         return janusGraph;
     }
     
