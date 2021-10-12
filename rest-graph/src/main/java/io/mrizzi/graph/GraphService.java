@@ -105,7 +105,6 @@ public class GraphService {
             janusGraphManagement.buildIndex(PATH_PARAM_APPLICATION_ID, Vertex.class).addKey(applicationIdPropertyKey, Mapping.STRING.asParameter()).buildMixedIndex("search");
 
             janusGraphManagement.commit();
-            LOG.info("done 0");
         }
         // TODO how to count with `query.force-index = true` property
 //        if (LOG.isDebugEnabled()) LOG.debugf("Central Graph vertex count at startup = %d", janusGraph.traversal().V().count().next());
@@ -116,7 +115,6 @@ public class GraphService {
             e.printStackTrace();
         }
 */
-        LOG.info("done 1");
         return janusGraph;
     }
     
