@@ -35,7 +35,7 @@ public class AnalysisExecutionProducer {
     @Inject
     ConnectionFactory connectionFactory;
 
-    public long triggerAnalysis(String applicationFilePath, String sources, String targets, String packages, Boolean sourceMode) {
+    public long triggerAnalysis(String applicationFilePath, String baseOutputPath, String sources, String targets, String packages, Boolean sourceMode) {
         LOG.debugf("JMS Connection Factory: %s", connectionFactory.toString());
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
             TextMessage executionRequestMessage = context.createTextMessage();
@@ -77,7 +77,7 @@ public class AnalysisExecutionProducer {
             windupExecution.setAnalysisContext(analysisContext);
             windupExecution.setTimeQueued(new GregorianCalendar());
             windupExecution.setState(ExecutionState.QUEUED);
-            windupExecution.setOutputPath(Path.of("/opt/windup/shared", Long.toString(id)).toString());
+            windupExecution.setOutputPath(Path.of(baseOutputPath, Long.toString(id)).toString());
 
             String json = WindupExecutionJSONUtil.serializeToString(windupExecution);
             executionRequestMessage.setText(json);

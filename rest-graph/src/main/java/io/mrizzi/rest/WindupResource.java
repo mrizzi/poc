@@ -56,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,6 +80,9 @@ public class WindupResource {
 
     @ConfigProperty(defaultValue = DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.central.properties.file.path")
     File centralGraphProperties;
+
+    @ConfigProperty(name = "io.mrizzi.shared-folder.path")
+    String sharedFolderPath;
 
     @Inject
     GraphService graphService;
@@ -272,14 +276,16 @@ public class WindupResource {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response runAnalysis(@MultipartForm AnalysisMultipartBody analysisRequest) {
         try {
-            File application = new File("/home/mrizzi/Tools/windup/sample/input/prototype/" + analysisRequest.applicationFileName);
+            File application = Paths.get(sharedFolderPath, analysisRequest.applicationFileName).toFile();
             Files.createDirectories(java.nio.file.Path.of(application.getParentFile().getAbsolutePath()));
             Files.copy(
                     analysisRequest.applicationFile,
                     application.toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
+            LOG.debugf("Copied input file to %s\n", application.getAbsolutePath());
             IOUtils.closeQuietly(analysisRequest.applicationFile);
             long analysisId = analysisExecutionProducer.triggerAnalysis(application.getAbsolutePath(),
+                    sharedFolderPath,
                     analysisRequest.sources,
                     analysisRequest.targets,
                     analysisRequest.packages,
@@ -305,7 +311,7 @@ public class WindupResource {
     @Path("/trigger")
     public Response trigger() {
         long analysisId = analysisExecutionProducer.triggerAnalysis(
-                "/home/mrizzi/Tools/windup/sample/input/jee-example-app-1.0.0.ear",
+                "samples/jee-example-app-1.0.0.ear", sharedFolderPath,
                 null, "eap7,cloud-readiness,quarkus,rhr", null, null);
         return Response
                 .created(URI.create(String.format("/windup/analysis/%d", analysisId)))
