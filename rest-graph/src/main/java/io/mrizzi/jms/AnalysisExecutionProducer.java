@@ -77,7 +77,7 @@ public class AnalysisExecutionProducer {
             windupExecution.setAnalysisContext(analysisContext);
             windupExecution.setTimeQueued(new GregorianCalendar());
             windupExecution.setState(ExecutionState.QUEUED);
-            windupExecution.setOutputPath(Path.of("/home/mrizzi/Tools/windup/sample/output/prototype", Long.toString(id)).toString());
+            windupExecution.setOutputPath(Path.of("/opt/windup/shared", Long.toString(id)).toString());
 
             String json = WindupExecutionJSONUtil.serializeToString(windupExecution);
             executionRequestMessage.setText(json);
