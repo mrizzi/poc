@@ -240,6 +240,8 @@ metadata:
     app.kubernetes.io/part-of: prototype
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: prototype
@@ -267,7 +269,7 @@ spec:
               name: http
               protocol: TCP
           env:
-            - name: IO_MRIZZI_SHARED-FOLDER_PATH
+            - name: IO_MRIZZI_SHARED_FOLDER_PATH
               value: "/opt/windup/shared"
             - name: QUARKUS_ARTEMIS_URL
               value: "tcp://artemis:61616"
@@ -279,11 +281,6 @@ spec:
               mountPath: /opt/windup/shared/
             - name: central-graph
               mountPath: /opt/windup/central-graph/
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - /opt/mta-cli/bin/stop.sh
           livenessProbe:
             httpGet:
               path: /q/health/live
