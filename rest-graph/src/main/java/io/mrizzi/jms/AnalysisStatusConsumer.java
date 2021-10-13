@@ -2,7 +2,6 @@ package io.mrizzi.jms;
 
 import io.mrizzi.graph.GraphService;
 import io.mrizzi.rest.WindupBroadcasterResource;
-import io.mrizzi.rest.WindupResource;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.jboss.logging.Logger;
@@ -15,10 +14,8 @@ import javax.inject.Inject;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSConsumer;
 import javax.jms.JMSContext;
-import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -54,6 +51,7 @@ public class AnalysisStatusConsumer implements Runnable {
 
     @Override
     public void run() {
+        LOG.debugf("JMS Connection Factory: %s", connectionFactory.toString());
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
             JMSConsumer consumer = context.createConsumer(context.createQueue("statusUpdateQueue"));
             while (true) {
@@ -77,8 +75,10 @@ public class AnalysisStatusConsumer implements Runnable {
                         break;
                 }
             }
-        } catch (JMSException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            LOG.fatal("Run broken");
+            throwable.printStackTrace();
+            throw new RuntimeException(throwable);
         }
     }
 }
