@@ -60,6 +60,9 @@ public class GraphService {
     @ConfigProperty(defaultValue = DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.central.properties.file.path")
     File centralGraphProperties;
 
+    @ConfigProperty(defaultValue= "/opt/windup/central-graph", name = "io.mrizzi.central-graph.base.path")
+    String centralGraphBasePath;
+
     private JanusGraph janusGraph;
 
     @PostConstruct
@@ -78,10 +81,12 @@ public class GraphService {
     private JanusGraph openCentralJanusGraph() throws ConfigurationException, IOException {
         LOG.infof("Opening Central Janus Graph properties file %s", centralGraphProperties);
         final PropertiesConfiguration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
-        Path graph = Files.createDirectories(Path.of("/opt/windup/central-graph/graph"));
-        Files.createDirectories(Path.of("/opt/windup/central-graph/search"));
-        configuration.setProperty("storage.directory", "/opt/windup/central-graph/graph");
-        configuration.setProperty("index.search.directory", "/opt/windup/central-graph/search");
+        Path graphPath = Path.of(centralGraphBasePath, "graph");
+        Path graph = Files.createDirectories(graphPath);
+        Path searchPath = Path.of(centralGraphBasePath, "search");
+        Files.createDirectories(searchPath);
+        configuration.setProperty("storage.directory", graphPath.toAbsolutePath().toString());
+        configuration.setProperty("index.search.directory", searchPath.toAbsolutePath().toString());
         LOG.debugf("Central Janus Graph configuration:\n%s", ConfigurationUtils.toString(configuration));
         try {
             LOG.debugf("graph folder can write (%b), read (%b), execute (%b)", graph.toFile().canWrite(), graph.toFile().canRead(), graph.toFile().canExecute());
