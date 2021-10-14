@@ -183,7 +183,8 @@ spec:
             claimName: shared-analysis
       containers:
         - name: windup-executor
-          image: localhost/mrizzi/windup-web-openshift-messaging-executor:5.2.1-SNAPSHOT
+#          image: localhost/mrizzi/windup-web-openshift-messaging-executor:5.2.1-SNAPSHOT
+          image: quay.io/mrizzi/windup-web-openshift-messaging-executor:prototype
           resources:
             requests:
               cpu: 2
@@ -263,7 +264,8 @@ spec:
           command: ['sh', '-c', "until wget -T 1 http://${ARTEMIS_CONSOLE_SERVICE_HOST}:${ARTEMIS_CONSOLE_SERVICE_PORT}/; do echo waiting for artemis; sleep 2; done"]
       containers:
         - name: prototype
-          image: localhost/mrizzi/rest-graph:0.0.1-SNAPSHOT
+#          image: localhost/mrizzi/rest-graph:0.0.1-SNAPSHOT
+          image: quay.io/mrizzi/rest-graph:prototype
           ports:
             - containerPort: 8080
               name: http
