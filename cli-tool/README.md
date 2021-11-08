@@ -4,6 +4,11 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
+## Generate JSON files for native build file
+
+```shell
+{GRAALVM_HOME}/bin/java -agentlib:native-image-agent=config-merge-dir=src/main/resources/META-INF/native-image/classgraph-on-graalvm/ -jar target/quarkus-app/quarkus-run.jar test
+```
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
