@@ -110,15 +110,23 @@
       <artifactId>janusgraph-es</artifactId>
       <version>${janusgraph.version}</version>
     </dependency>
+<!--
     <dependency>
-        <groupId>org.janusgraph</groupId>
-        <artifactId>janusgraph-driver</artifactId>
-        <version>${janusgraph.version}</version>
+      <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-driver</artifactId>
+      <version>${janusgraph.version}</version>
+      <exclusions>
+          <exclusion>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+          </exclusion>
+      </exclusions>
     </dependency>
+-->
     <dependency>
         <groupId>org.apache.tinkerpop</groupId>
         <artifactId>gremlin-driver</artifactId>
-        <version>3.5.1</version>
+        <version>${tinkerpop.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.windup.reporting</groupId>
