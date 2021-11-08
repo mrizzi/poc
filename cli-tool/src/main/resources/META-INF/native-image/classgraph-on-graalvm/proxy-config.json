@@ -1,0 +1,5 @@
+[
+  {
+    "interfaces":["org.apache.maven.plugin.MavenPluginManager","com.google.inject.internal.CircularDependencyProxy"]}
+  
+]
