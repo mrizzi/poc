@@ -1,6 +1,7 @@
 package io.mrizzi.jms;
 
 import io.mrizzi.graph.GraphService;
+import io.mrizzi.graph.RemoteGraphService;
 import io.mrizzi.rest.WindupBroadcasterResource;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
@@ -27,8 +28,13 @@ public class AnalysisStatusConsumer implements Runnable {
     @Inject
     ConnectionFactory connectionFactory;
 
+/*
     @Inject
     GraphService graphService;
+*/
+
+    @Inject
+    RemoteGraphService remoteGraphService;
 
     @Inject
     WindupBroadcasterResource windupBroadcasterResource;
@@ -66,7 +72,8 @@ public class AnalysisStatusConsumer implements Runnable {
                         LOG.infof("COMPLETED: %s", lastUpdate);
                         String id = Long.toString(message.getLongProperty("projectId"));
                         windupBroadcasterResource.broadcastMessage(String.format("{\"id\":%s,\"state\":\"MERGING\",\"totalWork\":0,\"workCompleted\":0}", id));
-                        graphService.updateCentralJanusGraph(windupExecution.getOutputPath(), id);
+//                        graphService.updateCentralJanusGraph(windupExecution.getOutputPath(), id);
+                        remoteGraphService.updateCentralJanusGraph(windupExecution.getOutputPath(), id);
                         windupBroadcasterResource.broadcastMessage(String.format("{\"id\":%s,\"state\":\"MERGED\",\"totalWork\":0,\"workCompleted\":1}", id));
                         // TODO delete the application file now
                         LOG.debug("COMPLETED updateCentralJanusGraph");
