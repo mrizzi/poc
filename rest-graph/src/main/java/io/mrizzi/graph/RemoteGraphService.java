@@ -6,14 +6,19 @@ import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import com.syncleus.ferma.typeresolvers.PolymorphicTypeResolver;
 import io.quarkus.runtime.Startup;
+import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.tinkerpop.gremlin.driver.Client;
+import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.util.system.ConfigurationUtil;
@@ -32,6 +37,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,12 +51,26 @@ import static org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalS
 @ApplicationScoped
 public class RemoteGraphService {
     private static final Logger LOG = Logger.getLogger(RemoteGraphService.class);
+    private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "src/main/resources/conf/remote-graph.properties";
+
+    @ConfigProperty(defaultValue = DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME, name = "io.mrizzi.graph.central.properties.file.path")
+    File centralGraphProperties;
 
     private JanusGraph janusGraph;
     private GraphTraversalSource g;
+    private Cluster cluster;
+    private Client client;
 
     @PostConstruct
     void init() throws Exception {
+        final Configuration configuration = ConfigurationUtil.loadPropertiesConfig(centralGraphProperties);
+        // using the remote driver for schema
+        try {
+            cluster = Cluster.open(configuration.getString("gremlin.remote.driver.clusterFile"));
+            client = cluster.connect();
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
         g = traversal().withRemote("conf/remote-graph.properties");
     }
 
@@ -59,6 +79,14 @@ public class RemoteGraphService {
         LOG.infof("Is central Janus Graph transaction open? %b", g.tx().isOpen());
         g.close();
         LOG.infof("Is central Janus Graph transaction still open? %b", g.tx().isOpen());
+    }
+
+    public JanusGraph getCentralJanusGraph() {
+        return (JanusGraph) g.getGraph();
+    }
+
+    public Graph getCentralGraph() {
+        return g.getGraph();
     }
 
     public void updateCentralJanusGraph(String sourceGraph, String applicationId) {
@@ -81,8 +109,7 @@ public class RemoteGraphService {
             while (vertexIterator.hasNext()) {
                 WindupVertexFrame vertex = vertexIterator.next();
                 LOG.debugf("Adding Vertex %s", vertex);
-                Vertex importedVertex = g.getGraph().addVertex();
-                verticesBeforeAndAfter.put(vertex.getElement().id(), importedVertex.id());
+                GraphTraversal<Vertex, Vertex> importedVertex = g.addV();
                 Iterator<VertexProperty<String>> types = vertex.getElement().properties(WindupFrame.TYPE_PROP);
                 types.forEachRemaining(type -> type.ifPresent(value -> importedVertex.property(WindupFrame.TYPE_PROP, value)));
                 vertex.getElement().keys()
@@ -94,6 +121,7 @@ public class RemoteGraphService {
 //                    importedVertex.setProperty(property, vertex.getProperty(/*).getElement().properties(*/property));
                         });
                 importedVertex.property(PATH_PARAM_APPLICATION_ID, applicationId);
+                verticesBeforeAndAfter.put(vertex.getElement().id(), importedVertex.next().id());
             }
             if (LOG.isDebugEnabled())
                 LOG.debugf("Central Graph count after %d", g.V().count().next());
@@ -108,7 +136,7 @@ public class RemoteGraphService {
                 Object importedOutVertexId = verticesBeforeAndAfter.get(outVertexId);
                 if (outVertexId == null || importedOutVertexId == null)
                     LOG.warnf("outVertexId %s -> importedOutVertexId %s", outVertexId, importedOutVertexId);
-                Vertex outVertex = g.V(importedOutVertexId).next();
+                GraphTraversal<Vertex, Vertex> outVertexTraversal = g.V(importedOutVertexId);
 
                 Object inVertexId = edge.inVertex().id();
                 Object importedInVertexId = verticesBeforeAndAfter.get(inVertexId);
@@ -122,21 +150,21 @@ public class RemoteGraphService {
                     LOG.warnf("Missing IN vertex. It seems like the %s vertex has not been imported", inVertexId);
                     continue;
                 }
-                Edge importedEdge = outVertex.addEdge(edge.label(), inVertex/*, edge.properties()*/);
-                LOG.debugf("Added Edge %s", importedEdge);
+                GraphTraversal<Vertex, Edge> importedEdgeTraversal = outVertexTraversal.addE(edge.label()).to(inVertex);
 
                 Iterator<Property<String>> types = edge.properties(WindupEdgeFrame.TYPE_PROP);
-                types.forEachRemaining(type -> type.ifPresent(value -> importedEdge.property(WindupFrame.TYPE_PROP, value)));
+                types.forEachRemaining(type -> type.ifPresent(value -> importedEdgeTraversal.property(WindupFrame.TYPE_PROP, value)));
                 edge.keys()
                         .stream()
                         .filter(s -> !WindupEdgeFrame.TYPE_PROP.equals(s))
                         .forEach(property -> {
                             LOG.debugf("Edge %d has property %s with values %s", edge.id(), property, edgeFrame.getProperty(property));
-                            importedEdge.property(property, edgeFrame.getProperty(property));
+                            importedEdgeTraversal.property(property, edgeFrame.getProperty(property));
                         });
-                importedEdge.property(PATH_PARAM_APPLICATION_ID, applicationId);
+                Edge importedEdge = importedEdgeTraversal.property(PATH_PARAM_APPLICATION_ID, applicationId).next();
+                LOG.debugf("Added Edge %s", importedEdge);
             }
-            g.getGraph().tx().commit();
+            g.tx().commit();
         } catch (Exception e) {
             LOG.errorf("Exception occurred: %s", e.getMessage());
             e.printStackTrace();
