@@ -40,7 +40,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -88,7 +87,7 @@ public class RemoteGraphService {
         LOG.infof("Is central Janus Graph transaction still open? %b", g.tx().isOpen());
     }
 
-    private String createManagementRequest() throws ConfigurationException, IOException {
+    private String createManagementRequest() {
         final StringBuilder request = new StringBuilder();
         request.append("JanusGraphManagement janusGraphManagement = graph.openManagement(); ");
         request.append("boolean created = false; ");
