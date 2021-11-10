@@ -111,6 +111,10 @@ public class RemoteGraphService {
         return g.getGraph();
     }
 
+    public GraphTraversalSource getCentralGraphTraversalSource() {
+        return g;
+    }
+
     public void updateCentralJanusGraph(String sourceGraph, String applicationId) {
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
