@@ -11,6 +11,8 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
+import org.apache.tinkerpop.gremlin.driver.Result;
+import org.apache.tinkerpop.gremlin.driver.ResultSet;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -38,6 +40,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,6 +74,10 @@ public class RemoteGraphService {
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
+
+        final ResultSet resultSet = client.submit(createManagementRequest());
+        resultSet.stream().map(Result::toString).forEach(LOG::info);
+
         g = traversal().withRemote("conf/remote-graph.properties");
     }
 
@@ -79,6 +86,21 @@ public class RemoteGraphService {
         LOG.infof("Is central Janus Graph transaction open? %b", g.tx().isOpen());
         g.close();
         LOG.infof("Is central Janus Graph transaction still open? %b", g.tx().isOpen());
+    }
+
+    private String createManagementRequest() throws ConfigurationException, IOException {
+        final StringBuilder request = new StringBuilder();
+        request.append("JanusGraphManagement janusGraphManagement = graph.openManagement(); ");
+        request.append("boolean created = false; ");
+        request.append("if (!janusGraphManagement.containsPropertyKey(\"w:winduptype\")) { ");
+            request.append("PropertyKey typePropPropertyKey = janusGraphManagement.makePropertyKey(\"w:winduptype\").dataType(String.class).cardinality(Cardinality.LIST).make(); ");
+            request.append("janusGraphManagement.buildIndex(\"w:winduptype\", Vertex.class).addKey(typePropPropertyKey).buildCompositeIndex(); ");
+            request.append("janusGraphManagement.buildIndex(\"edge-typevalue\", Edge.class).addKey(typePropPropertyKey).buildCompositeIndex(); ");
+            request.append("PropertyKey applicationIdPropertyKey = janusGraphManagement.makePropertyKey(\"applicationId\").dataType(String.class).cardinality(Cardinality.SINGLE).make(); ");
+            request.append("janusGraphManagement.buildIndex(\"applicationId\", Vertex.class).addKey(applicationIdPropertyKey, Mapping.STRING.asParameter()).buildMixedIndex(\"search\"); ");
+            request.append("janusGraphManagement.commit(); created = true; ");
+        request.append("} ");
+        return request.toString();
     }
 
     public JanusGraph getCentralJanusGraph() {
