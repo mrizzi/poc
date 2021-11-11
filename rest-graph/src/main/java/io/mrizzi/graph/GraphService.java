@@ -12,7 +12,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
@@ -39,6 +38,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Vetoed;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,6 +53,7 @@ import static io.mrizzi.rest.WindupResource.PATH_PARAM_APPLICATION_ID;
 
 @Startup
 @ApplicationScoped
+@Vetoed
 public class GraphService {
     private static final Logger LOG = Logger.getLogger(GraphService.class);
     private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "src/main/resources/centralGraphConfiguration.properties";
@@ -66,12 +67,12 @@ public class GraphService {
     private JanusGraph janusGraph;
 
     @PostConstruct
-    void init() throws ConfigurationException, IOException {
+    void init() throws Exception {
         janusGraph = openCentralJanusGraph();
     }
 
     @PreDestroy
-    void destroy() {
+    void destroy() throws Exception {
         LOG.infof("Is central Janus Graph transaction open? %b", janusGraph.tx().isOpen());
         LOG.infof("Closing Central Janus Graph properties file %s", centralGraphProperties);
         janusGraph.close();
@@ -127,38 +128,38 @@ public class GraphService {
         return janusGraph;
     }
 
+    public GraphTraversalSource getCentralGraphTraversalSource() {
+        return getCentralJanusGraph().traversal();
+    }
+
     public void updateCentralJanusGraph(String sourceGraph, String applicationId) {
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
         final Map<Object, Object> verticesBeforeAndAfter = new HashMap<>();
         try (JanusGraph janusGraph = openJanusGraph(sourceGraph);
              FramedGraph framedGraph = new DelegatingFramedGraph<>(janusGraph, frameFactory, new PolymorphicTypeResolver(reflections))) {
-            JanusGraph centralJanusGraph = getCentralJanusGraph();
-            FramedGraph framedCentralJanusGraph = new DelegatingFramedGraph<>(centralJanusGraph, frameFactory, new PolymorphicTypeResolver(reflections));
-            final Graph.Features features = centralJanusGraph.features();
-            final Graph.Features.GraphFeatures graphFeatures = features.graph();
-            Graph.Features.VertexPropertyFeatures vertexPropertyFeatures = features.vertex().properties();
-            LOG.debugf("supportsThreadedTransactions : %b", graphFeatures.supportsThreadedTransactions());
-            LOG.debugf("supportsTransactions : %b", graphFeatures.supportsTransactions());
-            LOG.debugf("supportsMixedListValues : %b", vertexPropertyFeatures.supportsMixedListValues());
-
+            final GraphTraversalSource centralGraphTraversalSource = getCentralGraphTraversalSource();
             // Delete the previous graph for the PATH_PARAM_APPLICATION_ID provided
             LOG.infof("Delete the previous vertices with Application ID %s", applicationId);
             if (LOG.isDebugEnabled())
-                LOG.debugf("Before deleting vertices with Application ID %s, central graph has %d vertices and %d edges", applicationId, centralJanusGraph.traversal().V().count().next(), centralJanusGraph.traversal().E().count().next());
-            final GraphTraversal<Vertex, Vertex> previousVertexGraph = centralJanusGraph.traversal().V();
+                LOG.debugf("Before deleting vertices with Application ID %s, central graph has %d vertices and %d edges",
+                        applicationId,
+                        centralGraphTraversalSource.V().count().next(),
+                        centralGraphTraversalSource.E().count().next());
+            final GraphTraversal<Vertex, Vertex> previousVertexGraph = centralGraphTraversalSource.V();
             previousVertexGraph.has(PATH_PARAM_APPLICATION_ID, applicationId);
             previousVertexGraph.drop().iterate();
             if (LOG.isDebugEnabled())
-                LOG.debugf("After deletion of vertices with Application ID %s, central graph has %d vertices and %d edges", applicationId, centralJanusGraph.traversal().V().count().next(), centralJanusGraph.traversal().E().count().next());
+                LOG.debugf("After deletion of vertices with Application ID %s, central graph has %d vertices and %d edges",
+                        applicationId,
+                        centralGraphTraversalSource.V().count().next(),
+                        centralGraphTraversalSource.E().count().next());
 
             final Iterator<WindupVertexFrame> vertexIterator = framedGraph.traverse(g -> g.V().has(WindupFrame.TYPE_PROP)).frame(WindupVertexFrame.class);
             while (vertexIterator.hasNext()) {
                 WindupVertexFrame vertex = vertexIterator.next();
                 LOG.debugf("Adding Vertex %s", vertex);
-                Vertex importedVertex = centralJanusGraph.addVertex();
-                verticesBeforeAndAfter.put(vertex.getElement().id(), importedVertex.id());
-//                WindupVertexFrame importedVertex = framedCentralJanusGraph.addFramedVertex(WindupVertexFrame.class);
+                GraphTraversal<Vertex, Vertex> importedVertex = centralGraphTraversalSource.addV();
                 Iterator<VertexProperty<String>> types = vertex.getElement().properties(WindupFrame.TYPE_PROP);
                 types.forEachRemaining(type -> type.ifPresent(value -> importedVertex.property(WindupFrame.TYPE_PROP, value)));
                 vertex.getElement().keys()
@@ -170,29 +171,28 @@ public class GraphService {
 //                    importedVertex.setProperty(property, vertex.getProperty(/*).getElement().properties(*/property));
                         });
                 importedVertex.property(PATH_PARAM_APPLICATION_ID, applicationId);
+                verticesBeforeAndAfter.put(vertex.getElement().id(), importedVertex.next().id());
             }
             if (LOG.isDebugEnabled())
-                LOG.debugf("Central Graph count after %d", centralJanusGraph.traversal().V().count().next());
-//            centralJanusGraph.traversal().V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
+                LOG.debugf("Central Graph count after %d", centralGraphTraversalSource.V().count().next());
+//            centralGraphTraversalSource.V().toList().forEach(v -> LOG.infof("%s with property %s", v, v.property(PATH_PARAM_APPLICATION_ID)));
             Iterator<WindupEdgeFrame> edgeIterator = framedGraph.traverse(GraphTraversalSource::E).frame(WindupEdgeFrame.class);
             while (edgeIterator.hasNext()) {
                 WindupEdgeFrame edgeFrame = edgeIterator.next();
                 LOG.debugf("Adding Edge %s", edgeFrame.toPrettyString());
                 Edge edge = edgeFrame.getElement();
 
-                GraphTraversalSource graphTraversalSource = centralJanusGraph.traversal();
-
                 Object outVertexId = edge.outVertex().id();
                 Object importedOutVertexId = verticesBeforeAndAfter.get(outVertexId);
                 if (outVertexId == null || importedOutVertexId == null)
                     LOG.warnf("outVertexId %s -> importedOutVertexId %s", outVertexId, importedOutVertexId);
-                Vertex outVertex = graphTraversalSource.V(importedOutVertexId).next();
+                GraphTraversal<Vertex, Vertex> outVertexTraversal = centralGraphTraversalSource.V(importedOutVertexId);
 
                 Object inVertexId = edge.inVertex().id();
                 Object importedInVertexId = verticesBeforeAndAfter.get(inVertexId);
                 if (inVertexId == null || importedInVertexId == null)
                     LOG.warnf("inVertexId %s -> importedInVertexId %s", inVertexId, importedInVertexId);
-                GraphTraversal<Vertex, Vertex> edgeGraphTraversal = graphTraversalSource.V(importedInVertexId);
+                GraphTraversal<Vertex, Vertex> edgeGraphTraversal = centralGraphTraversalSource.V(importedInVertexId);
                 Vertex inVertex = null;
                 if (edgeGraphTraversal.hasNext()) {
                     inVertex = edgeGraphTraversal.next();
@@ -200,22 +200,21 @@ public class GraphService {
                     LOG.warnf("Missing IN vertex. It seems like the %s vertex has not been imported", inVertexId);
                     continue;
                 }
-                Edge importedEdge = outVertex.addEdge(edge.label(), inVertex/*, edge.properties()*/);
-//                framedCentralJanusGraph.addFramedEdge()
-                LOG.debugf("Added Edge %s", importedEdge);
+                GraphTraversal<Vertex, Edge> importedEdgeTraversal = outVertexTraversal.addE(edge.label()).to(inVertex);
 
                 Iterator<Property<String>> types = edge.properties(WindupEdgeFrame.TYPE_PROP);
-                types.forEachRemaining(type -> type.ifPresent(value -> importedEdge.property(WindupFrame.TYPE_PROP, value)));
+                types.forEachRemaining(type -> type.ifPresent(value -> importedEdgeTraversal.property(WindupFrame.TYPE_PROP, value)));
                 edge.keys()
                         .stream()
                         .filter(s -> !WindupEdgeFrame.TYPE_PROP.equals(s))
                         .forEach(property -> {
                             LOG.debugf("Edge %d has property %s with values %s", edge.id(), property, edgeFrame.getProperty(property));
-                            importedEdge.property(property, edgeFrame.getProperty(property));
+                            importedEdgeTraversal.property(property, edgeFrame.getProperty(property));
                         });
-                importedEdge.property(PATH_PARAM_APPLICATION_ID, applicationId);
+                Edge importedEdge = importedEdgeTraversal.property(PATH_PARAM_APPLICATION_ID, applicationId).next();
+                LOG.debugf("Added Edge %s", importedEdge);
             }
-            centralJanusGraph.tx().commit();
+            centralGraphTraversalSource.tx().commit();
         } catch (Exception e) {
             LOG.errorf("Exception occurred: %s", e.getMessage());
             e.printStackTrace();
@@ -223,7 +222,7 @@ public class GraphService {
         }
     }
 
-    private Set<MethodHandler> getMethodHandlers() {
+    protected Set<MethodHandler> getMethodHandlers() {
         final Set<MethodHandler> handlers = new HashSet<>();
         handlers.add(new MapInPropertiesHandler());
         handlers.add(new MapInAdjacentPropertiesHandler());
@@ -235,7 +234,7 @@ public class GraphService {
         return handlers;
     }
 
-    private JanusGraph openJanusGraph(String sourceGraph) throws ConfigurationException {
+    protected JanusGraph openJanusGraph(String sourceGraph) throws ConfigurationException {
         // temporary workaround to work locally
         sourceGraph += "/graph/TitanConfiguration.properties";
         LOG.infof("Opening Janus Graph properties file %s", sourceGraph);
