@@ -38,7 +38,6 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Vetoed;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,7 +52,6 @@ import static io.mrizzi.rest.WindupResource.PATH_PARAM_APPLICATION_ID;
 
 @Startup
 @ApplicationScoped
-@Vetoed
 public class GraphService {
     private static final Logger LOG = Logger.getLogger(GraphService.class);
     private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "src/main/resources/centralGraphConfiguration.properties";
@@ -133,6 +131,7 @@ public class GraphService {
     }
 
     public void updateCentralJanusGraph(String sourceGraph, String applicationId) {
+        LOG.infof("Start...");
         final ReflectionCache reflections = new ReflectionCache();
         final AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(reflections, getMethodHandlers());
         final Map<Object, Object> verticesBeforeAndAfter = new HashMap<>();
@@ -220,6 +219,7 @@ public class GraphService {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        LOG.infof("...end");
     }
 
     protected Set<MethodHandler> getMethodHandlers() {

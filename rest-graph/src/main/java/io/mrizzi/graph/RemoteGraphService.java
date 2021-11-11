@@ -18,12 +18,14 @@ import org.jboss.windup.graph.model.WindupFrame;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Vetoed;
 import java.io.File;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource.traversal;
 
 @Startup
 @ApplicationScoped
+@Vetoed
 public class RemoteGraphService extends GraphService {
     private static final Logger LOG = Logger.getLogger(RemoteGraphService.class);
     private static final String DEFAULT_CENTRAL_GRAPH_CONFIGURATION_FILE_NAME = "src/main/resources/conf/remote-graph.properties";
