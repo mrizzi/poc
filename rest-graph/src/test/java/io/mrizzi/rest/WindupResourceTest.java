@@ -1,5 +1,7 @@
 package io.mrizzi.rest;
 
+import io.quarkus.artemis.test.ArtemisTestResource;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.not;
 
 @QuarkusTest
+@QuarkusTestResource(ArtemisTestResource.class)
 public class WindupResourceTest {
 
     private static final String PATH = "/windup";

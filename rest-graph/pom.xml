@@ -202,6 +202,39 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-test-artemis</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>artemis-server</artifactId>
+      <scope>test</scope>
+      <exclusions>
+          <exclusion>
+              <groupId>org.apache.geronimo.specs</groupId>
+              <artifactId>geronimo-json_1.0_spec</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.apache.johnzon</groupId>
+              <artifactId>johnzon-core</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.jboss.logmanager</groupId>
+              <artifactId>jboss-logmanager</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+          </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>commons-logging-jboss-logging</artifactId>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
