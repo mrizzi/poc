@@ -279,6 +279,8 @@ spec:
             - name: QUARKUS_LOG_LEVEL
 #              value: "DEBUG"
               value: "INFO"
+            - name: QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE
+              value: "100M"
           volumeMounts:
             - name: shared-volume
               mountPath: /opt/windup/shared/
