@@ -29,7 +29,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      # 10 Gi due to https://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/EnvironmentConfig.html#FREE_DISK
+      storage: 10Gi
   volumeMode: Filesystem
 ---
 apiVersion: v1
