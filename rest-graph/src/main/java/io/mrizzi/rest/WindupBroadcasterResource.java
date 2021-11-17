@@ -16,21 +16,23 @@ import javax.ws.rs.sse.SseEventSink;
 public class WindupBroadcasterResource {
 
     private Sse sse;
-    private SseBroadcaster broadcaster;
+    private volatile SseBroadcaster broadcaster;
 
     @Context
     public void setSse(final Sse sse) {
         this.sse = sse;
-        this.broadcaster = sse.newBroadcaster();
+        if (broadcaster == null) this.broadcaster = sse.newBroadcaster();
     }
 
     public void broadcastMessage(String message) {
-        final OutboundSseEvent event = sse.newEventBuilder()
-                .name("message")
-                .mediaType(MediaType.APPLICATION_JSON_TYPE)
-                .data(String.class, message)
-                .build();
-        broadcaster.broadcast(event);
+        if (sse != null && broadcaster != null) {
+            final OutboundSseEvent event = sse.newEventBuilder()
+                    .name("message")
+                    .mediaType(MediaType.APPLICATION_JSON_TYPE)
+                    .data(String.class, message)
+                    .build();
+            broadcaster.broadcast(event);
+        }
     }
 
     @GET
