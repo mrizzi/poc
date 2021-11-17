@@ -1,5 +1,15 @@
 # rest-graph Project
 
+- [Run on Minikube](#run-on-minikube)
+- [Test with the sample page](#test-with-the-sample-page)
+    * [Test with the sample configuration](#test-with-the-sample-configuration)
+    * [Test with the custom configuration](#test-with-the-custom-configuration)
+- [Test with Tackle](#test-with-tackle)
+- [Customizations](#customizations)
+    * [Max size for uploaded applications](#max-size-for-uploaded-applications)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 The Windup API component is a Kubernetes application meant to provide access to information created from Windup's rules execution during an analysis.  
 The project is at an early stage so please check for updates soon.  
 
