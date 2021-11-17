@@ -1,5 +1,16 @@
 # rest-graph Project
 
+The Windup API component is a Kubernetes application meant to provide access to information created from Windup's rules execution during an analysis.  
+The project is at an early stage so please check for updates soon.  
+
+Features available:
+* trigger the analysis of a compiled application posting the application archive (jar, war, ear)
+* retrieve the hints identified for the application
+* retrieve the hints for all the applications analyzed
+* get analysis status updates while analysis is running
+
+Features to be added: check the Issues and feel free to add your request for new features.  
+
 ## Run on Minikube
 Install a Minikube instance following instructions from.  
 Once Minikube is up and running, create the `prototype` namespace executing
