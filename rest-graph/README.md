@@ -41,3 +41,16 @@ If you want to remove all the resources create, you can run:
 kubectl delete -n prototype -f https://raw.githubusercontent.com/mrizzi/poc/main/rest-graph/minikube.yaml
 kubectl delete namespace prototype
 ```
+
+## Test with the sample page
+
+The provided sample page is meant to ease the initial testing with the Windup API.  
+
+### Test with the sample configuration
+
+The sample page provides a sample analysis configuration immediately usable clicking on the button `Request Analysis with sample configuration`.  
+The sample configuration will analyze the [jee-example-app-1.0.0.ear](./src/main/resources/META-INF/resources/samples/jee-example-app-1.0.0.ear) towards the Red Hat JBoss EAP 7, Quarkus, Cloud-readiness and Red Hat Runtimes targets.  
+
+### Test with the custom configuration
+
+The `Custom Configuration` form in the sample page let the user trigger an analysis with the desired values for the input parameters.  
