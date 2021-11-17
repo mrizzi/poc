@@ -54,3 +54,13 @@ The sample configuration will analyze the [jee-example-app-1.0.0.ear](./src/main
 ### Test with the custom configuration
 
 The `Custom Configuration` form in the sample page let the user trigger an analysis with the desired values for the input parameters.  
+
+## Customizations
+
+### Max size for uploaded applications
+
+Windup API default configuration allows the upload of applications up to 100 MB.  
+This size can be changed applying a different value to the `QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE` environment variable executing:  
+```shell
+kubectl set -n prototype env deployment prototype QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE="<new_value>"
+```
