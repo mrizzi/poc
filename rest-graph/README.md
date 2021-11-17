@@ -55,16 +55,6 @@ The sample configuration will analyze the [jee-example-app-1.0.0.ear](./src/main
 
 The `Custom Configuration` form in the sample page let the user trigger an analysis with the desired values for the input parameters.  
 
-## Customizations
-
-### Max size for uploaded applications
-
-Windup API default configuration allows the upload of applications up to 100 MB.  
-This size can be changed applying a different value to the `QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE` environment variable executing:  
-```shell
-kubectl set -n prototype env deployment prototype QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE="<new_value>"
-```
-
 ## Test with Tackle
 
 An early (i.e. proof of concept) integration between [Tackle](https://github.com/konveyor/tackle), the tools that support the modernization and migration of applications to Kubernetes from [Konveyor](https://www.konveyor.io/) community, and Windup API is available.  
@@ -80,3 +70,13 @@ Once deployed, the Tackle UI can be opened clicking on the link available in the
 In the Tackle UI, once a new application has been created, the `Analyze` command -for triggering an analysis with Windup API- is available in the right menu in the application row (see next screenshot).  
 
 ![Tackle analyze application](docs/images/tackle-select-analyze.png?raw=true "Tackle analyze application")  
+
+## Customizations
+
+### Max size for uploaded applications
+
+Windup API default configuration allows the upload of applications up to 100 MB.  
+This size can be changed applying a different value to the `QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE` environment variable executing:
+```shell
+kubectl set -n prototype env deployment prototype QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE="<new_value>"
+```
