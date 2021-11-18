@@ -1,5 +1,6 @@
 # rest-graph Project
 
+- [REST endpoints](#rest-endpoints)
 - [Run on Minikube](#run-on-minikube)
 - [Test with the sample page](#test-with-the-sample-page)
   * [Test with the sample configuration](#test-with-the-sample-configuration)
@@ -22,6 +23,12 @@ Features available:
 * get analysis status updates while analysis is running
 
 Features to be added: check the [Issues](https://github.com/mrizzi/poc/issues) for enhancements already planned and feel free to add your request for new features if it's not there yet.  
+
+## REST endpoints
+
+All the available endpoints are described with OpenAPI specifications in the [openapi.yaml](src/main/resources/META-INF/openapi.yaml) file.  
+It can be analyzed, for example, with the online [Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mrizzi/poc/main/rest-graph/src/main/resources/META-INF/openapi.yaml)  
+A Swagger UI is also embedded in the Windup API and accessible from the provided sample page as described below in the [Test with Swagger UI](#test-with-swagger-ui) paragraph.  
 
 ## Run on Minikube
 Install a Minikube instance following instructions from.  
