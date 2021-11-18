@@ -63,7 +63,9 @@ kubectl delete namespace prototype
 
 ## Test with the sample page
 
-The provided sample page is meant to ease the initial testing with the Windup API.  
+The provided sample page (see below screenshot) is meant to ease the initial testing with the Windup API.  
+
+![Windup Sample Page](docs/images/windup-sample-page.png?raw=true "Windup Sample Page")
 
 ### Test with the sample configuration
 
