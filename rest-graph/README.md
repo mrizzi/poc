@@ -109,4 +109,4 @@ This size can be changed applying a different value to the `QUARKUS_HTTP_LIMITS_
 kubectl set -n prototype env deployment prototype QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE="<new_value>"
 ```
 
-<script src="https://katacoda.com/embed.js"></script>
+<script src="//katacoda.com/embed.js"></script>
