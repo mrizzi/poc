@@ -2,16 +2,18 @@
 
 - [Run on Minikube](#run-on-minikube)
 - [Test with the sample page](#test-with-the-sample-page)
-    * [Test with the sample configuration](#test-with-the-sample-configuration)
-    * [Test with the custom configuration](#test-with-the-custom-configuration)
+  * [Test with the sample configuration](#test-with-the-sample-configuration)
+  * [Test with the custom configuration](#test-with-the-custom-configuration)
+  * [Test with Swagger UI](#test-with-swagger-ui)
 - [Test with Tackle](#test-with-tackle)
 - [Customizations](#customizations)
-    * [Max size for uploaded applications](#max-size-for-uploaded-applications)
+  * [Max size for uploaded applications](#max-size-for-uploaded-applications)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 The Windup API component is a Kubernetes application meant to provide access to information created from Windup's rules execution during an analysis.  
-The project is at an early stage so please check for updates soon.  
+The project is at an early stage so keep in mind API endpoints are not stable yet but in tech preview: we would like to listen to your feedback opening a new [Issue](https://github.com/mrizzi/poc/issues) to tell us what went well and what can be improved.  
+Please check frequently for updates and new features additions.  
 
 Features available:
 * trigger the analysis of a compiled application posting the application archive (jar, war, ear)
@@ -19,7 +21,7 @@ Features available:
 * retrieve the hints for all the applications analyzed
 * get analysis status updates while analysis is running
 
-Features to be added: check the Issues and feel free to add your request for new features.  
+Features to be added: check the [Issues](https://github.com/mrizzi/poc/issues) for enhancements already planned and feel free to add your request for new features if it's not there yet.  
 
 ## Run on Minikube
 Install a Minikube instance following instructions from.  
@@ -64,6 +66,11 @@ The sample configuration will analyze the [jee-example-app-1.0.0.ear](./src/main
 ### Test with the custom configuration
 
 The `Custom Configuration` form in the sample page let the user trigger an analysis with the desired values for the input parameters.  
+
+### Test with Swagger UI
+
+In the sample page, it's also available, on the right side, the link `OpenAPI with Swagger UI` that will take you to the Swagger UI with preloaded the OpenAPI file for the available endpoints.  
+This is useful for quickly execute some tests of the endpoints.
 
 ## Test with Tackle
 
