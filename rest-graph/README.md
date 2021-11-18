@@ -30,7 +30,6 @@ All the available endpoints are described with OpenAPI specifications in the [op
 It can be analyzed, for example, with the online [Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mrizzi/poc/main/rest-graph/src/main/resources/META-INF/openapi.yaml)  
 A Swagger UI is also embedded in the Windup API and accessible from the provided sample page as described below in the [Test with Swagger UI](#test-with-swagger-ui) paragraph.  
 
-<script src="https://katacoda.com/embed.js"></script>
 <div id="inline-terminal-1" data-katacoda-ondemand="true" data-katacoda-port="30000" data-katacoda-env="minikube:1.20" data-katacoda-command="start.sh" style="height: 500px;"></div>
 
 ## Run on Minikube
@@ -109,3 +108,5 @@ This size can be changed applying a different value to the `QUARKUS_HTTP_LIMITS_
 ```shell
 kubectl set -n prototype env deployment prototype QUARKUS_HTTP_LIMITS_MAX_BODY_SIZE="<new_value>"
 ```
+
+<script src="https://katacoda.com/embed.js"></script>
