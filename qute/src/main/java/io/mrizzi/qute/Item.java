@@ -1,4 +1,4 @@
-package io.mrizzi;
+package io.mrizzi.qute;
 
 import java.math.BigDecimal;
 

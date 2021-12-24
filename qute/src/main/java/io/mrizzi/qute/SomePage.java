@@ -1,4 +1,4 @@
-package io.mrizzi;
+package io.mrizzi.qute;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 
