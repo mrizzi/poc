@@ -9,6 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
+import java.util.concurrent.CompletionStage;
 
 @Path("item")
 public class ItemResource {
@@ -21,10 +22,10 @@ public class ItemResource {
     @GET
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance get(@PathParam("id") Integer id) {
+    public CompletionStage<String> get(@PathParam("id") Integer id) {
         Item item = new Item();
         item.name = id.toString();
         item.price = BigDecimal.valueOf(Math.random());
-        return Templates.item(item);
+        return Templates.item(item).renderAsync();
     }
 }
