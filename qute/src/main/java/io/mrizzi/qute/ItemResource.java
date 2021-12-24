@@ -22,7 +22,6 @@ public class ItemResource {
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance get(@PathParam("id") Integer id) {
-//        return Templates.item(service.findItem(id));
         Item item = new Item();
         item.name = id.toString();
         item.price = BigDecimal.valueOf(Math.random());
