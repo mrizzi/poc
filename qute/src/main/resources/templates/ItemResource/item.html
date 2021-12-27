@@ -2,10 +2,28 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <style>
+            body {
+                background-color: #000;
+                color: #fff;
+            }
+            h1 {
+                color: #4695EB;
+                font-size: 6vw;
+            }
+
+            h1 b {
+                color: #be9100;
+            }
+
+            p {
+                font-size: 2vw;
+            }
+        </style>
         <title>{item.name}</title>
     </head>
     <body>
-        <h1>{item.name}</h1>
+        <h1>Product <b>{item.name}</b></h1>
         <div>Price: {item.price}</div>
     </body>
 </html>
