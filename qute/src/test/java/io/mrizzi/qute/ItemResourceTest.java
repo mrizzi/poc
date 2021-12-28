@@ -13,10 +13,10 @@ public class ItemResourceTest {
     public void testEndpoint() {
         given()
                 .when()
-                .get("/item/11")
+                .get("/item/1")
                 .then()
                 .statusCode(200)
-                .body(containsString("<h1>11</h1>"),
+                .body(containsString("<h1>Product <b>Pear</b></h1>"),
                         containsString("<div>Price: 0.")
                 );
     }
