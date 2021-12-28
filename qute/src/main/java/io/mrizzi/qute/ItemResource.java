@@ -9,10 +9,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @Path("item")
 public class ItemResource {
+
+    private int id = 0;
+    private final List<Item> items = Arrays.asList(
+            new Item(id++, "Apple", BigDecimal.valueOf(Math.random())),
+            new Item(id++, "Pear", BigDecimal.valueOf(Math.random())),
+            new Item(id++, "Banana", BigDecimal.valueOf(Math.random())),
+            new Item(id++, "Pineapple", BigDecimal.valueOf(Math.random()))
+    );
 
     @CheckedTemplate
     public static class Templates {
@@ -23,9 +33,6 @@ public class ItemResource {
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
     public CompletionStage<String> get(@PathParam("id") Integer id) {
-        Item item = new Item();
-        item.name = id.toString();
-        item.price = BigDecimal.valueOf(Math.random());
-        return Templates.item(item).renderAsync();
+        return Templates.item(items.stream().filter(item -> item.id.equals(id)).findFirst().orElseThrow()).renderAsync();
     }
 }
