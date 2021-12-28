@@ -27,6 +27,7 @@ public class ItemResource {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance item(Item item);
+        public static native TemplateInstance items(List<Item> items);
     }
 
     @GET
@@ -34,5 +35,11 @@ public class ItemResource {
     @Produces(MediaType.TEXT_HTML)
     public CompletionStage<String> get(@PathParam("id") Integer id) {
         return Templates.item(items.stream().filter(item -> item.id.equals(id)).findFirst().orElseThrow()).renderAsync();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public CompletionStage<String> getAll() {
+        return Templates.items(items).renderAsync();
     }
 }

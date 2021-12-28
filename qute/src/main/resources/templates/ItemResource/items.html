@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {
+                background-color: #000;
+                color: #fff;
+            }
+            h1 {
+                color: #4695EB;
+                font-size: 6vw;
+            }
+    
+            h1 b {
+                color: #be9100;
+            }
+    
+            p {
+                font-size: 2vw;
+            }
+        </style>
+        <title>List of {items.size()} Items</title>
+    </head>
+    <body>
+    <h1>List of <b>{items.size()}</b> Items</h1>
+    <ul>
+        {#for item in items}
+            <li>
+            <a href="/item/{item.id}">{item.name ?: 'Unknown'}</a>: {item.price}
+            </li>
+        {/for}
+    </ul>
+    </body>
+</html>
