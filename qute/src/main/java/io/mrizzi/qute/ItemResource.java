@@ -17,7 +17,7 @@ import java.util.concurrent.CompletionStage;
 public class ItemResource {
 
     private int id = 0;
-    private final List<Item> items = Arrays.asList(
+    public final List<Item> items = Arrays.asList(
             new Item(id++, "Apple", BigDecimal.valueOf(Math.random())),
             new Item(id++, "Pear", BigDecimal.valueOf(Math.random())),
             new Item(id++, "Banana", BigDecimal.valueOf(Math.random())),
@@ -34,7 +34,15 @@ public class ItemResource {
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
     public CompletionStage<String> get(@PathParam("id") Integer id) {
+/*
+        try {
+            Thread.sleep(600);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return Templates.item(items.stream().filter(item -> item.id.equals(id)).findFirst().orElseThrow()).renderAsync();
+*/
+        return Templates.item(items.get(id)).renderAsync();
     }
 
     @GET

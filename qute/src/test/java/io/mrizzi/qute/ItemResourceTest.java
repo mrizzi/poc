@@ -29,7 +29,7 @@ public class ItemResourceTest {
                 .then()
                 .statusCode(200)
                 .body(containsString("<h1>List of <b>4</b> Items</h1>"),
-                        containsString("<li>\n" +
+                        containsString("<li id=\"li3\">\n" +
                                 "            <a href=\"/item/3\">Pineapple</a>: 0.")
                 );
     }

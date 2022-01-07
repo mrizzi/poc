@@ -20,17 +20,26 @@
                 font-size: 2vw;
             }
         </style>
-        <script src="/webjars/hotwired__turbo/dist/turbo.es2017-umd.js"></script>
+        {!<script src="/webjars/hotwired__turbo/dist/turbo.es2017-umd.js"></script>!}
         <title>List of {items.size()} Items</title>
     </head>
     <body>
     <h1>List of <b>{items.size()}</b> Items</h1>
-    <ul>
+    <ul id="ul_item">
         {#for item in items}
-            <li>
+        <li id="li{item.id}">
             <a href="/item/{item.id}">{item.name ?: 'Unknown'}</a>: {item.price}
-            </li>
+        </li>
         {/for}
     </ul>
+    <script type="text/javascript">
+        {#for item in items}
+        const socketItem{item.id} = new WebSocket('ws://localhost:8080/item/{item.id}/price');
+        socketItem{item.id}.addEventListener('message', function (event) {
+            var li = document.getElementById('li{item.id}');
+            li.outerHTML = event.data;
+        });
+        {/for}
+    </script>
     </body>
 </html>
