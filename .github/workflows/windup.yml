@@ -24,4 +24,4 @@ jobs:
       - name: Install Tools for MacOs
         uses: docker-practice/actions-setup-docker@v1
       - name: Run the build
-        run: mvn docker:start -N
+        run: mvn docker:start -N -s settings.xml
