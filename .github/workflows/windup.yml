@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-11, macos-10.15]
+        os: [macos-11, macos-10.15, ubuntu-18.04, ubuntu-20.04]
       fail-fast: false
     steps:
       - name: Checkout Windup Web project
@@ -23,6 +23,7 @@ jobs:
           java-version: '11'
           cache: 'maven'
       - name: Install Tools for MacOs
+        if: matrix.os == 'macos-10.15' || matrix.os == 'macos-11'
         uses: docker-practice/actions-setup-docker@v1
       - name: Run the build
         run: mvn docker:start -N -s settings.xml
