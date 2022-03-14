@@ -26,5 +26,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/windup-wildfly4development.zip
-          overwrite: true
+#          overwrite: true
           tag: windup-wildfly4development
