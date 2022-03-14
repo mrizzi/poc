@@ -65,7 +65,7 @@ jobs:
           java-version: '11'
           cache: 'maven'
       - name: Package Wildfly for Windup Web Console development
-        run: mvn clean package -DskipTests -Pwindup-wildfly4development
+        run: mvn -s settings.xml clean package -DskipTests -Pwindup-wildfly4development
       - name: Publish  Wildfly for Windup Web Console development as a GitHub Package
         uses: actions/upload-artifact@v3
         with:
