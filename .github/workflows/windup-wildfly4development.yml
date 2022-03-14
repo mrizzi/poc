@@ -36,3 +36,4 @@ jobs:
           asset_path: target/windup-wildfly4development.zip
           asset_name: windup-wildfly4development.zip
           asset_content_type: application/zip
+          release_id: 61771349
