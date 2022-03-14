@@ -21,11 +21,6 @@ jobs:
           cache: 'maven'
       - name: Package Wildfly for Windup Web Console development
         run: mvn -s settings.xml clean package -DskipTests -Pwindup-wildfly4development
-      - name: Publish Wildfly for Windup Web Console development as a GitHub Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: windup-wildfly4development.zip
-          path: target/windup-wildfly4development.zip
       - name: Upload Wildfly for Windup Web Console development
         uses: svenstaro/upload-release-action@v2
         with:
@@ -33,13 +28,3 @@ jobs:
           file: target/windup-wildfly4development.zip
           overwrite: true
           tag: windup-wildfly4development
-#        id: upload-release-asset
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          upload_url: https://uploads.github.com/repos/mrizzi/poc/releases/61771349/assets{?name,label}
-#          asset_path: target/windup-wildfly4development.zip
-#          asset_name: windup-wildfly4development.zip
-#          asset_content_type: application/zip
-#          release_id: 61771349
