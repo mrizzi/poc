@@ -9,170 +9,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 2,
-                "endColumn": 73,
-                "startColumn": 34,
-                "startLine": 2
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/persistence.xml",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 8,
+                  "endColumn": 16,
+                  "startColumn": 8,
+                  "startLine": 8
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
-          ],
-          "ruleId": "javaee-to-jakarta-namespaces-00002",
-          "message": {
-            "markdown": "Replace `http://xmlns.jcp.org/xml/ns/persistence` with `https://jakarta.ee/xml/ns/persistence` and change the schema version number",
-            "text": "Replace the Java EE persistence namespace, schemaLocation and version with the Jakarta equivalent"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 8,
-                "endColumn": 50,
-                "startColumn": 7,
-                "startLine": 8
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
-            "text": "javax.enterprise has been replaced by jakarta.enterprise"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 7,
-                "endColumn": 55,
-                "startColumn": 7,
-                "startLine": 7
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
-            "text": "javax.enterprise has been replaced by jakarta.enterprise"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 5,
-                "endColumn": 41,
-                "startColumn": 7,
-                "startLine": 5
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/annotation/Dukes.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
-            "text": "javax.enterprise has been replaced by jakarta.enterprise"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 2,
-                "endColumn": 188,
-                "startColumn": 149,
-                "startLine": 2
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/persistence.xml",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javaee-to-jakarta-namespaces-00002",
-          "message": {
-            "markdown": "Replace `http://xmlns.jcp.org/xml/ns/persistence` with `https://jakarta.ee/xml/ns/persistence` and change the schema version number",
-            "text": "Replace the Java EE persistence namespace, schemaLocation and version with the Jakarta equivalent"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 5,
-                "endColumn": 38,
-                "startColumn": 7,
-                "startLine": 5
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
-            "text": "javax.enterprise has been replaced by jakarta.enterprise"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 2,
-                "endColumn": 228,
-                "startColumn": 189,
-                "startLine": 2
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/persistence.xml",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javaee-to-jakarta-namespaces-00002",
-          "message": {
-            "markdown": "Replace `http://xmlns.jcp.org/xml/ns/persistence` with `https://jakarta.ee/xml/ns/persistence` and change the schema version number",
-            "text": "Replace the Java EE persistence namespace, schemaLocation and version with the Jakarta equivalent"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 9,
-                "endColumn": 27,
-                "startColumn": 7,
-                "startLine": 9
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -185,16 +32,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 6,
-                "endColumn": 39,
-                "startColumn": 7,
-                "startLine": 6
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/annotation/Dukes.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 7,
+                  "endColumn": 48,
+                  "startColumn": 8,
+                  "startLine": 7
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -207,21 +55,22 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 9,
-                "endColumn": 34,
-                "startColumn": 12,
-                "startLine": 9
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/persistence.xml",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 4,
+                  "endColumn": 19,
+                  "startColumn": 8,
+                  "startLine": 4
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/DukesService.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
-          "ruleId": "javax-to-jakarta-properties-00001",
+          "ruleId": "javax-to-jakarta-import-00001",
           "message": {
-            "markdown": "Rename properties prefixed by `javax` with `jakarta`",
-            "text": "Rename properties prefixed by javax with jakarta"
+            "markdown": "Replace the `javax.ejb` import statement with `jakarta.ejb`",
+            "text": "javax.ejb has been replaced by jakarta.ejb"
           }
         },
         {
@@ -229,16 +78,155 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 7,
-                "endColumn": 47,
-                "startColumn": 7,
-                "startLine": 7
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 10,
+                  "endColumn": 26,
+                  "startColumn": 8,
+                  "startLine": 10
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
+            "text": "javax.ws has been replaced by jakarta.ws"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 18,
+                  "endColumn": 37,
+                  "startColumn": 8,
+                  "startLine": 18
+                },
+                "artifactLocation": {
+                  "uri": "src/test/java/eu/agilejava/dukes/greeting/DukesServiceTest.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
+            "text": "javax.enterprise has been replaced by jakarta.enterprise"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 6,
+                  "endColumn": 37,
+                  "startColumn": 8,
+                  "startLine": 6
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
+            "text": "javax.enterprise has been replaced by jakarta.enterprise"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 4,
+                  "endColumn": 42,
+                  "startColumn": 8,
+                  "startLine": 4
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/annotation/Dukes.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
+            "text": "javax.enterprise has been replaced by jakarta.enterprise"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 9,
+                  "endColumn": 20,
+                  "startColumn": 8,
+                  "startLine": 9
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
+            "text": "javax.ws has been replaced by jakarta.ws"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 7,
+                  "endColumn": 15,
+                  "startColumn": 8,
+                  "startLine": 7
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
+            "text": "javax.ws has been replaced by jakarta.ws"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 6,
+                  "endColumn": 36,
+                  "startColumn": 8,
+                  "startLine": 6
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -251,16 +239,63 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 6,
-                "endColumn": 44,
-                "startColumn": 7,
-                "startLine": 6
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 5,
+                  "endColumn": 31,
+                  "startColumn": 8,
+                  "startLine": 5
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.persistence` import statement with `jakarta.persistence`",
+            "text": "javax.persistence has been replaced by jakarta.persistence"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 2,
+                  "endColumn": 39,
+                  "startColumn": 190,
+                  "startLine": 2
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/persistence.xml",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javaee-to-jakarta-namespaces-00002",
+          "message": {
+            "markdown": "Replace `http://xmlns.jcp.org/xml/ns/persistence` with `https://jakarta.ee/xml/ns/persistence` and change the schema version number",
+            "text": "Replace the Java EE persistence namespace, schemaLocation and version with the Jakarta equivalent"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 5,
+                  "endColumn": 31,
+                  "startColumn": 8,
+                  "startLine": 5
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -273,16 +308,86 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 2,
-                "endColumn": 248,
-                "startColumn": 229,
-                "startLine": 2
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/persistence.xml",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 6,
+                  "endColumn": 32,
+                  "startColumn": 8,
+                  "startLine": 6
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/annotation/Dukes.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.enterprise` import statement with `jakarta.enterprise`",
+            "text": "javax.enterprise has been replaced by jakarta.enterprise"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 5,
+                  "endColumn": 28,
+                  "startColumn": 8,
+                  "startLine": 5
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/CompleteDukeApplication.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
+            "text": "javax.ws has been replaced by jakarta.ws"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 5,
+                  "endColumn": 19,
+                  "startColumn": 8,
+                  "startLine": 5
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/DukesService.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.inject` import statement with `jakarta.inject`",
+            "text": "javax.inject has been replaced by jakarta.inject"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 2,
+                  "endColumn": 19,
+                  "startColumn": 230,
+                  "startLine": 2
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/persistence.xml",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
           ],
           "ruleId": "javaee-to-jakarta-namespaces-00030",
           "message": {
@@ -295,16 +400,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 4,
-                "endColumn": 41,
-                "startColumn": 7,
-                "startLine": 4
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 4,
+                  "endColumn": 34,
+                  "startColumn": 8,
+                  "startLine": 4
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -317,21 +423,22 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 2,
-                "endColumn": 26,
-                "startColumn": 13,
-                "startLine": 2
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/persistence.xml",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 19,
+                  "endColumn": 19,
+                  "startColumn": 8,
+                  "startLine": 19
+                },
+                "artifactLocation": {
+                  "uri": "src/test/java/eu/agilejava/dukes/greeting/DukesServiceTest.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
-          "ruleId": "javaee-to-jakarta-namespaces-00033",
+          "ruleId": "javax-to-jakarta-import-00001",
           "message": {
-            "markdown": "In the root tag, replace the `version` attribute value `2.1` with `3.0`",
-            "text": "Replace the Java EE version with the Jakarta equivalent"
+            "markdown": "Replace the `javax.inject` import statement with `jakarta.inject`",
+            "text": "javax.inject has been replaced by jakarta.inject"
           }
         },
         {
@@ -339,16 +446,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 4,
-                "endColumn": 24,
-                "startColumn": 7,
-                "startLine": 4
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/DukesGreeting.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 4,
+                  "endColumn": 17,
+                  "startColumn": 8,
+                  "startLine": 4
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/DukesGreeting.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -361,16 +469,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 1,
-                "endColumn": 2,
-                "startColumn": 1,
-                "startLine": 1
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/services/javax.enterprise.inject.spi.Extension",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 1,
+                  "endColumn": 1,
+                  "startColumn": 2,
+                  "startLine": 1
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/services/javax.enterprise.inject.spi.Extension",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-bootstrapping-files-00001",
           "message": {
@@ -383,38 +492,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 10,
-                "endColumn": 33,
-                "startColumn": 7,
-                "startLine": 10
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 5,
+                  "endColumn": 34,
+                  "startColumn": 8,
+                  "startLine": 5
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/annotation/Dukes.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
-            "text": "javax.ws has been replaced by jakarta.ws"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 18,
-                "endColumn": 44,
-                "startColumn": 7,
-                "startLine": 18
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/test/java/eu/agilejava/dukes/greeting/DukesServiceTest.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -427,104 +515,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 5,
-                "endColumn": 35,
-                "startColumn": 7,
-                "startLine": 5
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/CompleteDukeApplication.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 8,
+                  "endColumn": 43,
+                  "startColumn": 8,
+                  "startLine": 8
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/annotation/DukesExtension.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
-            "text": "javax.ws has been replaced by jakarta.ws"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 5,
-                "endColumn": 38,
-                "startColumn": 7,
-                "startLine": 5
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.persistence` import statement with `jakarta.persistence`",
-            "text": "javax.persistence has been replaced by jakarta.persistence"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 4,
-                "endColumn": 26,
-                "startColumn": 7,
-                "startLine": 4
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/DukesService.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.ejb` import statement with `jakarta.ejb`",
-            "text": "javax.ejb has been replaced by jakarta.ejb"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 8,
-                "endColumn": 23,
-                "startColumn": 7,
-                "startLine": 8
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
-            "text": "javax.ws has been replaced by jakarta.ws"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 4,
-                "endColumn": 49,
-                "startColumn": 7,
-                "startLine": 4
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/annotation/Dukes.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -537,16 +538,40 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 7,
-                "endColumn": 22,
-                "startColumn": 7,
-                "startLine": 7
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 2,
+                  "endColumn": 39,
+                  "startColumn": 35,
+                  "startLine": 2
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/persistence.xml",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
+          ],
+          "ruleId": "javaee-to-jakarta-namespaces-00002",
+          "message": {
+            "markdown": "Replace `http://xmlns.jcp.org/xml/ns/persistence` with `https://jakarta.ee/xml/ns/persistence` and change the schema version number",
+            "text": "Replace the Java EE persistence namespace, schemaLocation and version with the Jakarta equivalent"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 4,
+                  "endColumn": 27,
+                  "startColumn": 8,
+                  "startLine": 4
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/CompleteDukeApplication.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -559,21 +584,22 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 5,
-                "endColumn": 26,
-                "startColumn": 7,
-                "startLine": 5
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/DukesService.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 2,
+                  "endColumn": 39,
+                  "startColumn": 150,
+                  "startLine": 2
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/persistence.xml",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
-          "ruleId": "javax-to-jakarta-import-00001",
+          "ruleId": "javaee-to-jakarta-namespaces-00002",
           "message": {
-            "markdown": "Replace the `javax.inject` import statement with `jakarta.inject`",
-            "text": "javax.inject has been replaced by jakarta.inject"
+            "markdown": "Replace `http://xmlns.jcp.org/xml/ns/persistence` with `https://jakarta.ee/xml/ns/persistence` and change the schema version number",
+            "text": "Replace the Java EE persistence namespace, schemaLocation and version with the Jakarta equivalent"
           }
         },
         {
@@ -581,60 +607,17 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 6,
-                "endColumn": 43,
-                "startColumn": 7,
-                "startLine": 6
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 8,
+                  "endColumn": 22,
+                  "startColumn": 13,
+                  "startLine": 8
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/persistence.xml",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.persistence` import statement with `jakarta.persistence`",
-            "text": "javax.persistence has been replaced by jakarta.persistence"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 19,
-                "endColumn": 26,
-                "startColumn": 7,
-                "startLine": 19
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/test/java/eu/agilejava/dukes/greeting/DukesServiceTest.java",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
-          ],
-          "ruleId": "javax-to-jakarta-import-00001",
-          "message": {
-            "markdown": "Replace the `javax.inject` import statement with `jakarta.inject`",
-            "text": "javax.inject has been replaced by jakarta.inject"
-          }
-        },
-        {
-          "locations": [
-            {
-              "physicalLocation": {
-                "region": {
-                "endLine": 8,
-                "endColumn": 34,
-                "startColumn": 12,
-                "startLine": 8
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/resources/META-INF/persistence.xml",
-                "uriBaseId": "%SRCROOT%"
-              }
-            }}
+            }
           ],
           "ruleId": "javax-to-jakarta-properties-00001",
           "message": {
@@ -647,16 +630,40 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 6,
-                "endColumn": 20,
-                "startColumn": 7,
-                "startLine": 6
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 7,
+                  "endColumn": 40,
+                  "startColumn": 8,
+                  "startLine": 7
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/DukesRepository.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
+          ],
+          "ruleId": "javax-to-jakarta-import-00001",
+          "message": {
+            "markdown": "Replace the `javax.persistence` import statement with `jakarta.persistence`",
+            "text": "javax.persistence has been replaced by jakarta.persistence"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 6,
+                  "endColumn": 13,
+                  "startColumn": 8,
+                  "startLine": 6
+                },
+                "artifactLocation": {
+                  "uri": "src/main/java/eu/agilejava/dukes/greeting/HelloDukeResource.java",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
           ],
           "ruleId": "javax-to-jakarta-import-00001",
           "message": {
@@ -669,21 +676,45 @@
             {
               "physicalLocation": {
                 "region": {
-                "endLine": 4,
-                "endColumn": 34,
-                "startColumn": 7,
-                "startLine": 4
-              },
-              "artifactLocation": {
-                "uri": "complete-duke/src/main/java/eu/agilejava/dukes/CompleteDukeApplication.java",
-                "uriBaseId": "%SRCROOT%"
+                  "endLine": 9,
+                  "endColumn": 22,
+                  "startColumn": 13,
+                  "startLine": 9
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/persistence.xml",
+                  "uriBaseId": "%SRCROOT%"
+                }
               }
-            }}
+            }
           ],
-          "ruleId": "javax-to-jakarta-import-00001",
+          "ruleId": "javax-to-jakarta-properties-00001",
           "message": {
-            "markdown": "Replace the `javax.ws` import statement with `jakarta.ws`",
-            "text": "javax.ws has been replaced by jakarta.ws"
+            "markdown": "Rename properties prefixed by `javax` with `jakarta`",
+            "text": "Rename properties prefixed by javax with jakarta"
+          }
+        },
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "region": {
+                  "endLine": 2,
+                  "endColumn": 13,
+                  "startColumn": 14,
+                  "startLine": 2
+                },
+                "artifactLocation": {
+                  "uri": "src/main/resources/META-INF/persistence.xml",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "ruleId": "javaee-to-jakarta-namespaces-00033",
+          "message": {
+            "markdown": "In the root tag, replace the `version` attribute value `2.1` with `3.0`",
+            "text": "Replace the Java EE version with the Jakarta equivalent"
           }
         }
       ],
@@ -707,7 +738,7 @@
             {
               "id": "javax-to-jakarta-import-00001",
               "shortDescription": {
-                "text": "javax.enterprise has been replaced by jakarta.enterprise"
+                "text": "javax.ws has been replaced by jakarta.ws"
               }
             },
             {
