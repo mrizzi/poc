@@ -8,7 +8,7 @@ import javax.enterprise.event.Observes;
 
 public class StaticContentRoute {
     public void init(@Observes Router router) {
-        router.get("/static/*").handler(StaticHandler.create(FileSystemAccess.RELATIVE, "content/"));
+        router.get("/another-static/*").handler(StaticHandler.create(FileSystemAccess.RELATIVE, "content/"));
 //        router.get("/static/*").handler(StaticHandler.create(FileSystemAccess.ROOT, "/absolute/path/to/static/content/quarkus-reactive-routes/content/index.html"));
         router.get("/homepage").handler(StaticHandler.create(FileSystemAccess.RELATIVE, "content/index.html"));
     }
