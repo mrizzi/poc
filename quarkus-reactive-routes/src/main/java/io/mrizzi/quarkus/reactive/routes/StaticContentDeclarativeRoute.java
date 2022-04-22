@@ -15,4 +15,9 @@ public class StaticContentDeclarativeRoute {
         StaticHandler.create(FileSystemAccess.RELATIVE, "content/").handle(rc);
     }
 
+    @Route(path = "/homepage", methods = Route.HttpMethod.GET)
+    void indexContent(RoutingContext rc) {
+        StaticHandler.create(FileSystemAccess.RELATIVE, "content/index.html").handle(rc);
+    }
+
 }
