@@ -16,6 +16,4 @@ jobs:
         with:
           repository: 'mrizzi/windup'
       - name: Run the build
-        run: |
-          mvn -X -v -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver"
-          echo $CHROMEWEBDRIVER/chromedriver
+        run: mvn -X -v -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver" ; echo $CHROMEWEBDRIVER/chromedriver
