@@ -1,0 +1,17 @@
+name: ChromeDriver test jobs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  chromedriver:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+      fail-fast: false
+    steps:
+      - name: Run the build
+        run: |
+          mvn -X -v -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver"
+          echo $CHROMEWEBDRIVER/chromedriver
