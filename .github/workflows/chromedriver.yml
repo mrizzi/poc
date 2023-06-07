@@ -11,6 +11,10 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
       fail-fast: false
     steps:
+      - name: Checkout Windup project (mrizzi's fork)
+        uses: actions/checkout@v3
+        with:
+          repository: 'mrizzi/windup'
       - name: Run the build
         run: |
           mvn -X -v -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver"
