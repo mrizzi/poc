@@ -1,6 +1,7 @@
 name: ChromeDriver test jobs
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
