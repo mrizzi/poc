@@ -23,5 +23,5 @@ jobs:
           mvn -X -v -D"webdriver.chrome.driver=${env:CHROMEWEBDRIVER}/chromedriver"
           echo ${env:CHROMEWEBDRIVER}/chromedriver
           ls -l ${env:CHROMEWEBDRIVER}
-          ${env:CHROMEWEBDRIVER}/${{ runner.os == 'Windows' && 'chromedriver.exe' || 'chromedriver'  }}
+          ls -l ${env:CHROMEWEBDRIVER}/${{ runner.os == 'Windows' && 'chromedriver.exe' || 'chromedriver'  }}
         shell: pwsh
