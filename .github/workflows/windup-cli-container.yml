@@ -1,0 +1,24 @@
+name: CLI Container image check
+
+on:
+  workflow_dispatch:
+    inputs: { }
+
+jobs:
+  tests:
+    name: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        runtime: [ docker ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup docker (missing on MacOS)
+        if: ${{ matrix.os == 'macos-latest' && matrix.runtime == 'docker' }}
+        run: |
+          brew install docker
+          colima start
+      - name: Container runtime info
+        run: |
+          ${{ matrix.runtime }} run --platform linux/arm64 --name windup-cli --pull always quay.io/windupeng/windup-cli-openshift:latest --input /opt/migrationtoolkit/samples/jee-example-app-1.0.0.ear --output /opt/migrationtoolkit/samples/jee-example-app-1.0.0.ear.report --target discovery --exportZipReport
